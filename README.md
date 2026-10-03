@@ -59,3 +59,7 @@ pip install numpy matplotlib ipywidgets notebook
 ```
 
 Open a notebook from the `notebooks/` folder. The first cell finds `lab/` by itself.
+
+## Use
+
+Students and staff of MST 0441 at BI Norwegian Business School are free to use, run and copy this material for the course. All other rights are reserved: there is no open licence, so ask before reusing or redistributing it elsewhere.
