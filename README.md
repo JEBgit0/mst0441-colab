@@ -9,6 +9,8 @@ Each session has two pages.
 
 ## Open a session
 
+### Part one: Consumers
+
 | Session | Topic | Guided | Sandbox |
 | --- | --- | --- | --- |
 | 2 | Budgets, preferences and the MRS | [open](https://colab.research.google.com/github/JEBgit0/mst0441-colab/blob/main/notebooks/s02_guided.ipynb) | [open](https://colab.research.google.com/github/JEBgit0/mst0441-colab/blob/main/notebooks/s02_sandbox.ipynb) |
@@ -17,7 +19,26 @@ Each session has two pages.
 | 5 | Assets and choice under uncertainty | [open](https://colab.research.google.com/github/JEBgit0/mst0441-colab/blob/main/notebooks/s05_guided.ipynb) | [open](https://colab.research.google.com/github/JEBgit0/mst0441-colab/blob/main/notebooks/s05_sandbox.ipynb) |
 | 6 | General equilibrium and exchange | [open](https://colab.research.google.com/github/JEBgit0/mst0441-colab/blob/main/notebooks/s06_guided.ipynb) | [open](https://colab.research.google.com/github/JEBgit0/mst0441-colab/blob/main/notebooks/s06_sandbox.ipynb) |
 | 7 | Market failure and externalities | [open](https://colab.research.google.com/github/JEBgit0/mst0441-colab/blob/main/notebooks/s07_guided.ipynb) | [open](https://colab.research.google.com/github/JEBgit0/mst0441-colab/blob/main/notebooks/s07_sandbox.ipynb) |
+
+### Part two: Trade
+
+| Session | Topic | Guided | Sandbox |
+| --- | --- | --- | --- |
 | 8 | Firms, tasks and technology (AI) | [open](https://colab.research.google.com/github/JEBgit0/mst0441-colab/blob/main/notebooks/s08_guided.ipynb) | [open](https://colab.research.google.com/github/JEBgit0/mst0441-colab/blob/main/notebooks/s08_sandbox.ipynb) |
+| 9 | Comparative advantage: Ricardo | after 5 Oct | after solutions |
+| 10 | Heckscher-Ohlin and factor prices | after 9 Oct | after solutions |
+| 11 | Monopolistic competition, gravity and trade policy | after 16 Oct | after solutions |
+
+### Part three: Strategy
+
+| Session | Topic | Guided | Sandbox |
+| --- | --- | --- | --- |
+| 12 | Static games and Nash equilibrium | after 26 Oct | after solutions |
+| 13 | Dynamic games and credibility | after 2 Nov | after solutions |
+| 14 | Incomplete information and signaling | after 9 Nov | after solutions |
+| 15 | Repeated games, collusion and competition policy | after 16 Nov | after solutions |
+
+The dates are when the notes for that session unlock (06:00). The guided page follows after that, and the sandbox after the solutions are posted.
 
 ## How to use a notebook
 
