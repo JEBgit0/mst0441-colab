@@ -193,11 +193,14 @@ class SubstitutionLab(Lab):
                 if lr is not None:
                     text += ", or %s in logs" % num(lr / lp)
             rows.append(("Before &rarr; after", text + "."))
-            rows.append(("Shares", "labor's share %s &rarr; %s, so relative spending on capital "
-                                   "rK/(wE) changed by %s%%." % (
-                                       num(b["share"]), num(s["share"]),
-                                       num(pct_change((1 - b["share"]) / b["share"],
-                                                      (1 - s["share"]) / s["share"]), 1))))
+            shares = "labor's share %s &rarr; %s" % (num(b["share"]), num(s["share"]))
+            # With perfect substitutes the firm may hire no workers at all. Then
+            # rK/(wE) divides by zero, so there is no percentage change to report.
+            if b["share"] > 0 and s["share"] > 0:
+                shares += (", so relative spending on capital rK/(wE) changed by %s%%"
+                           % num(pct_change((1 - b["share"]) / b["share"],
+                                            (1 - s["share"]) / s["share"]), 1))
+            rows.append(("Shares", shares + "."))
         rows.append(("Wages", "Two inputs, constant returns, a fixed labor force: more capital "
                               "never lowers the wage, whatever &sigma; is. That needs the task model."))
         return table(rows)
