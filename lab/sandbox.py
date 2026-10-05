@@ -6,37 +6,15 @@ It is the counterpart of the guided page (guided.py) and is released once the
 problem set's solutions are out.
 
 This file has no economics in it either. It holds what every sandbox lab
-needs: drawing a figure to PNG (the same trick as guided.py, so VS Code shows
-it once), a slider with sensible defaults, number formatting for the readout,
-and the "sticky" axes that keep a pivot visible.
+needs: a slider with sensible defaults, number formatting for the readout, and
+the "sticky" axes that keep a pivot visible. The colours and the drawing of a
+figure to PNG are in style.py, shared with the guided pages.
 """
 
-import io
 import math
+import re
 
-# Light palette, shared with the guided pages so the two look like one course.
-INK = "#1f2937"
-MUTE = "#6b7280"
-GRID = "#e5e7eb"
-LINE = "#2563eb"          # the live budget line
-CURVE = "#db2777"         # indifference curves
-BEFORE = "#9ca3af"        # the frozen "before" state
-DIRECT = "#059669"        # a comparison budget (equal-revenue direct charge)
-NEW = "#ea580c"
-
-
-def render(draw, figsize, dpi=110):
-    # A bare Figure with its own canvas never touches pyplot, so the notebook
-    # cannot show it a second time. draw(fig) fills it in.
-    from matplotlib.figure import Figure
-    from matplotlib.backends.backend_agg import FigureCanvasAgg
-
-    fig = Figure(figsize=figsize)
-    FigureCanvasAgg(fig)
-    draw(fig)
-    buf = io.BytesIO()
-    fig.savefig(buf, format="png", dpi=dpi)
-    return buf.getvalue()
+from style import GRID, INK, MUTE, render
 
 
 def style_axes(ax):
@@ -91,6 +69,19 @@ def slider(description, lo, hi, step, value, fmt=".2f"):
         readout_format=fmt, continuous_update=False,
         style={"description_width": "130px"},
         layout=W.Layout(width="340px"))
+
+
+def html_label(widget, text):
+    # A slider label with Greek letters or subscripts, e.g. "&omega;<sub>A</sub>
+    # of x". That needs HTML in the description. ipywidgets 8 has a flag for
+    # it; older versions (Colab may still ship 7) would show the codes as
+    # text, so fall back to plain letters there: "omega_A of x".
+    widget.description = text
+    if hasattr(widget, "description_allow_html"):
+        widget.description_allow_html = True
+    else:
+        plain = text.replace("<sub>", "_").replace("</sub>", "")
+        widget.description = re.sub(r"&(\w+);", r"\1", plain)
 
 
 def preset_button(label, kind, on_click):

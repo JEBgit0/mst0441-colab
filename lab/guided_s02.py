@@ -27,23 +27,14 @@ Answers are hashes (see guided.py). To change a question, recompute its
 hashes with `python guided.py <qid>.<box> <answer>`.
 """
 
-from guided import BOX, GuidedProblem, Question, tag
-
-# Where each step comes from. Problem numbers are the in-person problem set
-# (A2_Problems.pdf); page numbers are the printed pages of s02_notes.pdf.
-PS = lambda part: tag("problem", "Problem " + part)
-NOTES = lambda where: tag("notes", "Notes " + where)
+# PS and NOTES say where each step comes from. Problem numbers are the in-person
+# problem set (A2_Problems.pdf); page numbers are the printed pages of
+# s02_notes.pdf.
+from guided import BOX, NOTES, PS, GuidedProblem, Question
+from style import CURVE, FILL, HALF, INK, LINE, MUTE, NEW
 
 # A2.1's numbers. Given in the problem text, so nothing is given away here.
 P_C, P_H, M = 1.0, 3.0, 90.0
-
-# Light palette: Colab's notebook is white by default.
-INK = "#1f2937"
-MUTE = "#6b7280"
-LINE = "#2563eb"          # the budget line the student built
-NEW = "#ea580c"           # the line after a price change, always dashed
-HALF = "#7c3aed"          # the line after the income cut, also dashed
-FILL = "#2563eb"
 
 SHIFT = "It shifts, parallel to the old line"
 PIV_C = "It pivots around the c-intercept"
@@ -504,7 +495,6 @@ kari = GuidedProblem(
 # ======================================================================
 
 A_PT, B_PT, Z_PT = (2.0, 4.0), (4.0, 2.0), (3.0, 6.0)
-CURVE = "#db2777"
 
 
 def _hyperbola(ax, level, **kw):

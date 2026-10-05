@@ -13,24 +13,16 @@ import math
 
 import numpy as np
 
+import edgeworth_plots as ed
 from equilibrium import Economy
-from sandbox import (Lab, BEFORE, CURVE, DIRECT, INK, LINE, MUTE, NEW, legend, num,
-                     style_axes, table)
+from sandbox import Lab, html_label, legend, num, style_axes, table
+from style import BEFORE, CURVE, DIRECT, HALF, INK, LINE, MUTE, NEW
 
-A_COL, B_COL, CC, CORE, LENS = LINE, CURVE, DIRECT, NEW, "#7c3aed"
+A_COL, B_COL, CC, CORE, LENS = LINE, CURVE, DIRECT, NEW, HALF
 
 
 def economy(v):
     return Economy(v["a"], v["b"], (v["wAx"], v["wAy"]), (v["wBx"], v["wBy"]))
-
-
-def html_ok(widget, text):
-    widget.description = text
-    if hasattr(widget, "description_allow_html"):
-        widget.description_allow_html = True
-    else:
-        widget.description = (text.replace("<sub>", "_").replace("</sub>", "")
-                              .replace("&omega;", "w"))
 
 
 def box_axes(ax, e):
@@ -54,41 +46,12 @@ def box_axes(ax, e):
     ax.set_ylabel(r"$y_A$", color=INK, fontsize=9, loc="top")
 
 
-def ic_a(ax, e, x, y, **kw):
-    xs = np.linspace(e.X * 0.004, e.X * 0.996, 300)
-    level = e.uA(x, y)
-    ax.plot(xs, np.clip([e.icA(level, v) for v in xs], -1, e.Y + 1), **kw)
-
-
-def ic_b(ax, e, x, y, **kw):
-    xs = np.linspace(e.X * 0.004, e.X * 0.996, 300)
-    level = e.uB(*e.b_bundle(x, y))
-    ax.plot(xs, np.clip([e.icB(level, v) for v in xs], -1, e.Y + 1), **kw)
-
-
-def lens(ax, e, x, y, **kw):
-    xs = np.linspace(e.X * 0.004, e.X * 0.996, 400)
-    lo = np.clip([e.icA(e.uA(x, y), v) for v in xs], 0, e.Y)
-    hi = np.clip([e.icB(e.uB(*e.b_bundle(x, y)), v) for v in xs], 0, e.Y)
-    ax.fill_between(xs, lo, hi, where=lo < hi, lw=0, **kw)
-
-
-def contract(ax, e, **kw):
-    xs = np.linspace(0, e.X, 300)
-    ax.plot(xs, [e.contract(v) for v in xs], **kw)
-
-
 def core_segment(ax, e):
     lo, hi = e.core()
     xs = np.linspace(lo, hi, 60)
     ax.plot(xs, [e.contract(v) for v in xs], color=CORE, lw=5, alpha=0.85,
             solid_capstyle="round", label="core", zorder=4)
     return lo, hi
-
-
-def price_line(ax, e, p, x0, y0, **kw):
-    xs = np.array([0.0, e.X])
-    ax.plot(xs, y0 - p * (xs - x0), **kw)
 
 
 def dot(ax, x, y, colour, hollow=False, ms=7, z=6):
@@ -179,18 +142,18 @@ class MarketLab(Lab):
     ]
 
     def relabel(self):
-        html_ok(self.w["a"], "a: A's share on x")
-        html_ok(self.w["b"], "b: B's share on x")
-        html_ok(self.w["wAx"], "&omega;<sub>A</sub> of x")
-        html_ok(self.w["wAy"], "&omega;<sub>A</sub> of y")
-        html_ok(self.w["wBx"], "&omega;<sub>B</sub> of x")
-        html_ok(self.w["wBy"], "&omega;<sub>B</sub> of y")
+        html_label(self.w["a"], "a: A's share on x")
+        html_label(self.w["b"], "b: B's share on x")
+        html_label(self.w["wAx"], "&omega;<sub>A</sub> of x")
+        html_label(self.w["wAy"], "&omega;<sub>A</sub> of y")
+        html_label(self.w["wBx"], "&omega;<sub>B</sub> of x")
+        html_label(self.w["wBy"], "&omega;<sub>B</sub> of y")
         manual = self.flag("manual")
-        html_ok(self.w["p"], "Price ratio p" if manual else "p (tick 'by hand')")
+        html_label(self.w["p"], "Price ratio p" if manual else "p (tick 'by hand')")
         self.w["p"].disabled = not manual
         point = self.flag("point")
-        html_ok(self.w["xp"], "Marked x<sub>A</sub>" if point else "x<sub>A</sub> (tick 'mark')")
-        html_ok(self.w["yp"], "Marked y<sub>A</sub>" if point else "y<sub>A</sub> (tick 'mark')")
+        html_label(self.w["xp"], "Marked x<sub>A</sub>" if point else "x<sub>A</sub> (tick 'mark')")
+        html_label(self.w["yp"], "Marked y<sub>A</sub>" if point else "y<sub>A</sub> (tick 'mark')")
         self.w["xp"].disabled = self.w["yp"].disabled = not point
 
     def compute(self):
@@ -222,18 +185,18 @@ class MarketLab(Lab):
         e, p = st["e"], st["p"]
         box_axes(ax, e)
         if st["before"] is not None:
-            contract(ax, st["before"], color=BEFORE, lw=1.4, ls="--", label="before: contract curve")
-        contract(ax, e, color=CC, lw=2, label="contract curve")
+            ed.contract(ax, st["before"], color=BEFORE, lw=1.4, ls="--", label="before: contract curve")
+        ed.contract(ax, e, color=CC, lw=2, label="contract curve")
         if self.flag("lens"):
-            lens(ax, e, *e.wA, color=LENS, alpha=0.14)
-            ic_a(ax, e, *e.wA, color=A_COL, lw=1, ls=":")
-            ic_b(ax, e, *e.wA, color=B_COL, lw=1, ls=":")
+            ed.lens(ax, e, *e.wA, color=LENS, alpha=0.14)
+            ed.ic_a(ax, e, *e.wA, color=A_COL, lw=1, ls=":")
+            ed.ic_b(ax, e, *e.wA, color=B_COL, lw=1, ls=":")
             core_segment(ax, e)
-        price_line(ax, e, p, *e.wA, color=INK, lw=1.5, label="price line, slope −p")
+        ed.price_line(ax, e, p, *e.wA, color=INK, lw=1.5, label="price line, slope −p")
         (xA, yA), (xB, yB) = st["dem"]
         bx, by = e.b_bundle(xB, yB)               # B's choice, in A's coordinates
-        ic_a(ax, e, xA, yA, color=A_COL, lw=1.4)
-        ic_b(ax, e, bx, by, color=B_COL, lw=1.4)
+        ed.ic_a(ax, e, xA, yA, color=A_COL, lw=1.4)
+        ed.ic_b(ax, e, bx, by, color=B_COL, lw=1.4)
         if abs(xA - bx) > 1e-6 or abs(yA - by) > 1e-6:
             ax.plot([xA, bx], [yA, by], color=LENS, lw=2.5, alpha=0.7, label="the gap")
             dot(ax, xA, yA, A_COL)
@@ -246,9 +209,9 @@ class MarketLab(Lab):
         if "pt" in st:
             x, y = st["pt"]
             if 0 < x < e.X and 0 < y < e.Y:
-                lens(ax, e, x, y, color=NEW, alpha=0.12)
-                ic_a(ax, e, x, y, color=A_COL, lw=1, ls="--")
-                ic_b(ax, e, x, y, color=B_COL, lw=1, ls="--")
+                ed.lens(ax, e, x, y, color=NEW, alpha=0.12)
+                ed.ic_a(ax, e, x, y, color=A_COL, lw=1, ls="--")
+                ed.ic_b(ax, e, x, y, color=B_COL, lw=1, ls="--")
             dot(ax, x, y, NEW, hollow=True)
         legend(ax, loc="upper left")
         ax.get_legend().set_zorder(10)
@@ -386,13 +349,13 @@ class WelfareLab(Lab):
     ]
 
     def relabel(self):
-        html_ok(self.w["a"], "a: A's share on x")
-        html_ok(self.w["b"], "b: B's share on x")
-        html_ok(self.w["wAx"], "&omega;<sub>A</sub> of x")
-        html_ok(self.w["wAy"], "&omega;<sub>A</sub> of y")
-        html_ok(self.w["wBx"], "&omega;<sub>B</sub> of x")
-        html_ok(self.w["wBy"], "&omega;<sub>B</sub> of y")
-        html_ok(self.w["F"], "F: A's x on the curve")
+        html_label(self.w["a"], "a: A's share on x")
+        html_label(self.w["b"], "b: B's share on x")
+        html_label(self.w["wAx"], "&omega;<sub>A</sub> of x")
+        html_label(self.w["wAy"], "&omega;<sub>A</sub> of y")
+        html_label(self.w["wBx"], "&omega;<sub>B</sub> of x")
+        html_label(self.w["wBy"], "&omega;<sub>B</sub> of y")
+        html_label(self.w["F"], "F: A's x on the curve")
 
     def compute(self):
         v = self.values()
@@ -422,14 +385,14 @@ class WelfareLab(Lab):
             return
         e, s = st["e"], st["s"]
         box_axes(ax, e)
-        contract(ax, e, color=CC, lw=2, label="contract curve")
+        ed.contract(ax, e, color=CC, lw=2, label="contract curve")
         if self.flag("lens"):
-            lens(ax, e, *e.wA, color=LENS, alpha=0.14)
+            ed.lens(ax, e, *e.wA, color=LENS, alpha=0.14)
             core_segment(ax, e)
         F = s["F"]
-        ic_a(ax, e, *F, color=A_COL, lw=1.4)
-        ic_b(ax, e, *F, color=B_COL, lw=1.4)
-        price_line(ax, e, s["p"], *F, color=INK, lw=1.6, label="supporting line")
+        ed.ic_a(ax, e, *F, color=A_COL, lw=1.4)
+        ed.ic_b(ax, e, *F, color=B_COL, lw=1.4)
+        ed.price_line(ax, e, s["p"], *F, color=INK, lw=1.6, label="supporting line")
         dot(ax, *st["eq"]["A"], CC, hollow=True)
         ax.annotate("CE from ω", st["eq"]["A"], textcoords="offset points", xytext=(8, -12),
                     color=CC, fontsize=8.5)

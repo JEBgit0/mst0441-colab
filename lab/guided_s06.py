@@ -15,91 +15,25 @@ answer_keys/s06_keys.py in the private repo. The maths is equilibrium.py.
 
 import numpy as np
 
+import edgeworth_plots as ed
+import guided_plots as gp
 from equilibrium import Economy
-from guided import BOX, GuidedProblem, Question, tag
-from guided_s03 import (CURVE, GREEN, GREY, HALF, INK, LINE, MUTE, NEW, _dot, _legend,
-                        _start)
-from guided_s04 import _arrow
+from guided import BOX, NOTES, PS, GuidedProblem, Question, answers
+from style import CURVE, GREEN, GREY, HALF, INK, LINE, MUTE, NEW
 
-try:
-    from answers_s06 import HASHES
-except ImportError:
-    HASHES = {}
+H, M = answers("s06")
 
-PS = lambda part: tag("problem", "Problem " + part)
-NOTES = lambda where: tag("notes", "Notes " + where)
 XA, YA, XB, YB = "x<sub>A</sub>", "y<sub>A</sub>", "x<sub>B</sub>", "y<sub>B</sub>"
 MA, MB = "m<sub>A</sub>", "m<sub>B</sub>"
 ZX, ZY = "z<sub>x</sub>", "z<sub>y</sub>"
 A_COL, B_COL = LINE, CURVE          # A blue, B pink, as in the notes' figures
 
 
-def H(key):
-    return HASHES.get(key, "missing:" + key)
-
-
-def M(messages):
-    return {H(k): v for k, v in messages.items()}
-
-
 # ------------------------------------------------------------------ drawing ---
 
-def _box(ax, X, Y):
-    # A's origin bottom left, B's top right, rotated through 180 degrees.
-    ax.set_xlim(0, X)
-    ax.set_ylim(0, Y)
-    ax.set_aspect("equal")
-    for side in ax.spines.values():
-        side.set_visible(True)
-        side.set_color(INK)
-    ax.set_xticks([])
-    ax.set_yticks([])
-    kw = dict(color=INK, fontsize=10)
-    # Each axis label sits at the far end of its own axis, arrow pointing away
-    # from its owner's corner.
-    ax.text(X, -0.025 * Y, r"$x_A$ $\rightarrow$", ha="right", va="top", **kw)
-    ax.text(-0.025 * X, Y, r"$y_A$ $\uparrow$", ha="right", va="top", **kw)
-    ax.text(0, 1.025 * Y, r"$\leftarrow$ $x_B$", ha="left", va="bottom", **kw)
-    ax.text(1.025 * X, 0, r"$y_B$ $\downarrow$", ha="left", va="bottom", **kw)
-    ax.text(-0.025 * X, -0.025 * Y, "A", ha="right", va="top", color=A_COL,
-            fontsize=12, weight="bold")
-    ax.text(1.025 * X, 1.025 * Y, "B", ha="left", va="bottom", color=B_COL,
-            fontsize=12, weight="bold")
-
-
-def _xs(e, n=400):
-    return np.linspace(e.X * 0.004, e.X * 0.996, n)
-
-
-def _icA(ax, e, x, y, **kw):
-    level = e.uA(x, y)
-    xs = _xs(e)
-    ax.plot(xs, np.clip([e.icA(level, v) for v in xs], -1, e.Y + 1), **kw)
-
-
-def _icB(ax, e, x, y, **kw):
-    # Through A's point (x, y): B holds what is left.
-    level = e.uB(*e.b_bundle(x, y))
-    xs = _xs(e)
-    ax.plot(xs, np.clip([e.icB(level, v) for v in xs], -1, e.Y + 1), **kw)
-
-
 def _lens(ax, e, x, y, label="both better off"):
-    xs = _xs(e)
-    lo = np.clip([e.icA(e.uA(x, y), v) for v in xs], 0, e.Y)
-    hi = np.clip([e.icB(e.uB(*e.b_bundle(x, y)), v) for v in xs], 0, e.Y)
-    ax.fill_between(xs, lo, hi, where=lo < hi, color=HALF, alpha=0.16, lw=0, label=label)
-
-
-def _contract(ax, e, **kw):
-    xs = np.linspace(0, e.X, 300)
-    ax.plot(xs, [e.contract(v) for v in xs], **kw)
-
-
-def _pline(ax, e, p, x0, y0, **kw):
-    # The price line through (x0, y0), slope -p, across the box.
-    xs = np.array([0, e.X])
-    ax.plot(xs, y0 - p * (xs - x0), **kw)
+    # The lens in the guided pages' colour.
+    ed.lens(ax, e, x, y, color=HALF, alpha=0.16, label=label)
 
 
 def _zframe(ax, pmax, zlo, zhi):
@@ -132,23 +66,23 @@ def draw_box(ax, stage):
     e = ASTRID
     if stage == 0:
         ax.axis("off")
-        _start(ax)
+        gp.start(ax)
         return
-    _box(ax, e.X, e.Y)
+    ed.box(ax, e.X, e.Y)
     if stage >= 2:
-        _dot(ax, 3, 9, r"$\omega$", 8, 4, colour=INK)
+        gp.dot(ax, 3, 9, r"$\omega$", 8, 4, colour=INK)
     if stage >= 3:
-        _icA(ax, e, 3, 9, color=A_COL, lw=1.6, label="A through " + r"$\omega$")
-        _icB(ax, e, 3, 9, color=B_COL, lw=1.6, label="B through " + r"$\omega$")
+        ed.ic_a(ax, e, 3, 9, color=A_COL, lw=1.6, label="A through " + r"$\omega$")
+        ed.ic_b(ax, e, 3, 9, color=B_COL, lw=1.6, label="B through " + r"$\omega$")
     if stage >= 4:
         _lens(ax, e, 3, 9)
     if stage >= 5:
-        _dot(ax, 4, 6, "A (4, 6)\nB (2, 6)", 14, -10, colour=GREEN)
+        gp.dot(ax, 4, 6, "A (4, 6)\nB (2, 6)", 14, -10, colour=GREEN)
     if stage >= 6:
-        _icA(ax, e, 4, 6, color=A_COL, lw=1.2, ls="--")
-        _icB(ax, e, 4, 6, color=B_COL, lw=1.2, ls="--")
-        _pline(ax, e, 3, 4, 6, color=INK, lw=0.8, ls=":")
-    _legend(ax, loc="upper right")
+        ed.ic_a(ax, e, 4, 6, color=A_COL, lw=1.2, ls="--")
+        ed.ic_b(ax, e, 4, 6, color=B_COL, lw=1.2, ls="--")
+        ed.price_line(ax, e, 3, 4, 6, color=INK, lw=0.8, ls=":")
+    gp.legend(ax, loc="upper right")
 
 
 DOWNRIGHT = "A gets more x and gives up y: down and to the right of ω"
@@ -260,25 +194,25 @@ WORKED = Economy(0.75, 0.5, (8, 8), (4, 4))
 
 def draw_economy(ax, stage):
     e = WORKED
-    _box(ax, e.X, e.Y)
-    _dot(ax, 8, 8, r"$\omega$", 8, 4, colour=INK)
+    ed.box(ax, e.X, e.Y)
+    gp.dot(ax, 8, 8, r"$\omega$", 8, 4, colour=INK)
     if stage in (1, 2):
         for p in (0.5, 1, 4):
-            _pline(ax, e, p, 8, 8, color=GREY, lw=1)
+            ed.price_line(ax, e, p, 8, 8, color=GREY, lw=1)
         ax.text(0.3, 0.6, "every price line\npasses through " + r"$\omega$", color=GREY,
                 fontsize=9)
     if stage >= 3:
-        _pline(ax, e, 2, 8, 8, color=INK, lw=1.6, label="price line, slope " + r"$-p^*$")
+        ed.price_line(ax, e, 2, 8, 8, color=INK, lw=1.6, label="price line, slope " + r"$-p^*$")
     if stage >= 5:
-        _dot(ax, 9, 6, "(9, 6)", 8, -14, colour=GREEN)
+        gp.dot(ax, 9, 6, "(9, 6)", 8, -14, colour=GREEN)
     if stage >= 6:
-        _arrow(ax, (8, 8), (9, 6), GREEN)
+        gp.arrow(ax, (8, 8), (9, 6), GREEN)
     if stage >= 8:
-        _icA(ax, e, 9, 6, color=A_COL, lw=1.4, label="A")
-        _icB(ax, e, 9, 6, color=B_COL, lw=1.4, label="B")
+        ed.ic_a(ax, e, 9, 6, color=A_COL, lw=1.4, label="A")
+        ed.ic_b(ax, e, 9, 6, color=B_COL, lw=1.4, label="B")
     if stage >= 9:
-        _contract(ax, e, color=GREEN, lw=2, label="contract curve")
-    _legend(ax, loc="center left")
+        ed.contract(ax, e, color=GREEN, lw=2, label="contract curve")
+    gp.legend(ax, loc="center left")
 
 
 ECONOMY_QUESTIONS = [
@@ -389,17 +323,17 @@ def draw_excess(ax, stage):
         ax.plot(ps, [e.excess(p)[1] for p in ps], color=B_COL, lw=2, label=r"$z_y$")
     if stage >= 2:
         ax.plot(ps, [e.excess(p)[0] for p in ps], color=A_COL, lw=2, label=r"$z_x$")
-        _dot(ax, 1, 4, "+4", 6, 2, colour=A_COL)
-        _dot(ax, 1, -4, "-4", 6, -12, colour=B_COL)
+        gp.dot(ax, 1, 4, "+4", 6, 2, colour=A_COL)
+        gp.dot(ax, 1, -4, "-4", 6, -12, colour=B_COL)
     if stage >= 3:
-        _arrow(ax, (1, 0.6), (1.9, 0.6), NEW)
+        gp.arrow(ax, (1, 0.6), (1.9, 0.6), NEW)
         ax.text(1.05, 1.0, "raise p", color=NEW, fontsize=9)
     if stage >= 4:
-        _dot(ax, 3, -4 / 3, "-4/3", 6, -12, colour=A_COL)
-        _dot(ax, 3, 4, "+4", 6, 2, colour=B_COL)
+        gp.dot(ax, 3, -4 / 3, "-4/3", 6, -12, colour=A_COL)
+        gp.dot(ax, 3, 4, "+4", 6, 2, colour=B_COL)
     if stage >= 5:
-        _dot(ax, 2, 0, "p* = 2", 10, -22, colour=GREEN)
-    _legend(ax, loc="upper right")
+        gp.dot(ax, 2, 0, "p* = 2", 10, -22, colour=GREEN)
+    gp.legend(ax, loc="upper right")
 
 
 CHEAP = "x is too cheap: excess demand for x, excess supply of y"
@@ -499,37 +433,37 @@ SHEET = Economy(0.75, 0.25, (2, 6), (6, 2))
 def draw_worksheet(fig, stage):
     bx, zx = fig.subplots(1, 2, gridspec_kw=dict(width_ratios=[1, 1.15]))
     e = SHEET
-    _box(bx, e.X, e.Y)
-    _dot(bx, 2, 6, r"$\omega$", -8, -14, colour=INK, ha="right")
+    ed.box(bx, e.X, e.Y)
+    gp.dot(bx, 2, 6, r"$\omega$", -8, -14, colour=INK, ha="right")
     if stage >= 1:
         bx.annotate("A: (2, 6)\nB: (6, 2)", (2, 6), textcoords="offset points",
                     xytext=(10, 10), color=MUTE, fontsize=8.5)
     if stage >= 2:
-        _icA(bx, e, 2, 6, color=A_COL, lw=1.4)
-        _icB(bx, e, 2, 6, color=B_COL, lw=1.4)
+        ed.ic_a(bx, e, 2, 6, color=A_COL, lw=1.4)
+        ed.ic_b(bx, e, 2, 6, color=B_COL, lw=1.4)
         _lens(bx, e, 2, 6, label=None)
     if stage >= 4:
-        _pline(bx, e, 1, 2, 6, color=INK, lw=1.6)
+        ed.price_line(bx, e, 1, 2, 6, color=INK, lw=1.6)
     if stage >= 5:
-        _dot(bx, 6, 2, "(6, 2)", 8, -16, colour=GREEN)
+        gp.dot(bx, 6, 2, "(6, 2)", 8, -16, colour=GREEN)
     if stage >= 6:
-        _arrow(bx, (2, 6), (6, 2), GREEN)
+        gp.arrow(bx, (2, 6), (6, 2), GREEN)
     if stage >= 9:
-        _contract(bx, e, color=GREEN, lw=2)
-        _icA(bx, e, 6, 2, color=A_COL, lw=1, ls="--")
-        _icB(bx, e, 6, 2, color=B_COL, lw=1, ls="--")
+        ed.contract(bx, e, color=GREEN, lw=2)
+        ed.ic_a(bx, e, 6, 2, color=A_COL, lw=1, ls="--")
+        ed.ic_b(bx, e, 6, 2, color=B_COL, lw=1, ls="--")
 
     _zframe(zx, 2.4, -3.5, 6.5)
     zx.set_title("Excess demand", loc="left", color=INK, fontsize=10)
     if stage >= 7:
-        _dot(zx, 0.5, 5, "", colour=A_COL)
-        _dot(zx, 0.5, -2.5, "", colour=B_COL)
+        gp.dot(zx, 0.5, 5, "", colour=A_COL)
+        gp.dot(zx, 0.5, -2.5, "", colour=B_COL)
     if stage >= 8:
         _zcurves(zx, e, 2.4)
-        _dot(zx, 2, -2.5, "", colour=A_COL)
-        _dot(zx, 2, 5, "", colour=B_COL)
-        _dot(zx, 1, 0, "both cross here", 6, 6, colour=GREEN)
-    _legend(zx, loc="upper right")
+        gp.dot(zx, 2, -2.5, "", colour=A_COL)
+        gp.dot(zx, 2, 5, "", colour=B_COL)
+        gp.dot(zx, 1, 0, "both cross here", 6, 6, colour=GREEN)
+    gp.legend(zx, loc="upper right")
     fig.subplots_adjust(wspace=0.3)
 
 
@@ -626,21 +560,21 @@ SAME = Economy(0.5, 0.5, (3, 9), (9, 3))
 
 def draw_same(ax, stage):
     e = SAME
-    _box(ax, e.X, e.Y)
-    _dot(ax, 3, 9, r"$\omega$", 8, 4, colour=INK)
+    ed.box(ax, e.X, e.Y)
+    gp.dot(ax, 3, 9, r"$\omega$", 8, 4, colour=INK)
     if stage >= 1:
         for x in (4, 8):
-            _icA(ax, e, x, x, color=A_COL, lw=1)
-            _icB(ax, e, x, x, color=B_COL, lw=1)
-            _dot(ax, x, x, "", colour=GREEN)
+            ed.ic_a(ax, e, x, x, color=A_COL, lw=1)
+            ed.ic_b(ax, e, x, x, color=B_COL, lw=1)
+            gp.dot(ax, x, x, "", colour=GREEN)
     if stage >= 2:
-        _contract(ax, e, color=GREEN, lw=2, label="contract curve")
+        ed.contract(ax, e, color=GREEN, lw=2, label="contract curve")
     if stage >= 3:
-        _pline(ax, e, 1, 3, 9, color=INK, lw=1.6, label="price line")
+        ed.price_line(ax, e, 1, 3, 9, color=INK, lw=1.6, label="price line")
     if stage >= 4:
-        _dot(ax, 6, 6, "CE", 8, -14, colour=NEW)
-        _arrow(ax, (3, 9), (6, 6), NEW)
-    _legend(ax, loc="lower right")
+        gp.dot(ax, 6, 6, "CE", 8, -14, colour=NEW)
+        gp.arrow(ax, (3, 9), (6, 6), NEW)
+    gp.legend(ax, loc="lower right")
 
 
 EQ_RATIO = "A's y/x equals B's y/x: equal MRS"
@@ -747,32 +681,32 @@ DIFF = Economy(2 / 3, 1 / 3, (3, 9), (9, 3))
 
 def draw_different(ax, stage):
     e = DIFF
-    _box(ax, e.X, e.Y)
-    _dot(ax, 3, 9, r"$\omega$", 8, 4, colour=INK)
+    ed.box(ax, e.X, e.Y)
+    gp.dot(ax, 3, 9, r"$\omega$", 8, 4, colour=INK)
     if stage in (1, 2):
         for p in (0.5, 2):
-            _pline(ax, e, p, 3, 9, color=GREY, lw=1)
+            ed.price_line(ax, e, p, 3, 9, color=GREY, lw=1)
     if stage >= 3:
-        _pline(ax, e, 1, 3, 9, color=INK, lw=1.6, label="price line")
+        ed.price_line(ax, e, 1, 3, 9, color=INK, lw=1.6, label="price line")
     if stage >= 5:
-        _dot(ax, 8, 4, "CE (8, 4)", 14, -4, colour=NEW)
+        gp.dot(ax, 8, 4, "CE (8, 4)", 14, -4, colour=NEW)
     if stage >= 6:
-        _arrow(ax, (3, 9), (8, 4), NEW)
+        gp.arrow(ax, (3, 9), (8, 4), NEW)
     if stage >= 7:
-        _contract(ax, e, color=GREEN, lw=2, label="contract curve")
+        ed.contract(ax, e, color=GREEN, lw=2, label="contract curve")
         ax.plot([0, 12], [0, 12], color=GREY, lw=1, ls="--", label="A6.1: the diagonal")
     if stage >= 8:
-        _icA(ax, e, 8, 4, color=A_COL, lw=1.2)
-        _icB(ax, e, 8, 4, color=B_COL, lw=1.2)
+        ed.ic_a(ax, e, 8, 4, color=A_COL, lw=1.2)
+        ed.ic_b(ax, e, 8, 4, color=B_COL, lw=1.2)
     if stage >= 10:
-        _dot(ax, 6, 6, "(6, 6)", -8, 6, colour=HALF, ha="right")
-        _icA(ax, e, 6, 6, color=A_COL, lw=1, ls=":")
-        _icB(ax, e, 6, 6, color=B_COL, lw=1, ls=":")
+        gp.dot(ax, 6, 6, "(6, 6)", -8, 6, colour=HALF, ha="right")
+        ed.ic_a(ax, e, 6, 6, color=A_COL, lw=1, ls=":")
+        ed.ic_b(ax, e, 6, 6, color=B_COL, lw=1, ls=":")
     if stage >= 11:
         _lens(ax, e, 6, 6, label=None)
     if stage >= 12:
-        _dot(ax, 6, 2.4, "(6, 2.4)", -8, -14, colour=GREEN, ha="right")
-    _legend(ax, loc="upper left")
+        gp.dot(ax, 6, 2.4, "(6, 2.4)", -8, -14, colour=GREEN, ha="right")
+    gp.legend(ax, loc="upper left")
 
 
 A_BUYS = "A buys 5 services from B and pays with 5 goods"
@@ -921,18 +855,18 @@ different = GuidedProblem(
 
 def draw_theorems(ax, stage):
     e = WORKED
-    _box(ax, e.X, e.Y)
-    _contract(ax, e, color=GREEN, lw=2, label="contract curve")
-    _dot(ax, 8, 8, r"$\omega$", 8, 4, colour=INK)
-    _dot(ax, 9, 6, "CE", 8, -12, colour=GREEN)
+    ed.box(ax, e.X, e.Y)
+    ed.contract(ax, e, color=GREEN, lw=2, label="contract curve")
+    gp.dot(ax, 8, 8, r"$\omega$", 8, 4, colour=INK)
+    gp.dot(ax, 9, 6, "CE", 8, -12, colour=GREEN)
     if stage >= 2:
-        _dot(ax, 6, 3, "F", -8, 4, colour=HALF, ha="right")
-        _icA(ax, e, 6, 3, color=A_COL, lw=1.2)
-        _icB(ax, e, 6, 3, color=B_COL, lw=1.2)
-        _pline(ax, e, 1.5, 6, 3, color=INK, lw=1.6, label="supporting line")
+        gp.dot(ax, 6, 3, "F", -8, 4, colour=HALF, ha="right")
+        ed.ic_a(ax, e, 6, 3, color=A_COL, lw=1.2)
+        ed.ic_b(ax, e, 6, 3, color=B_COL, lw=1.2)
+        ed.price_line(ax, e, 1.5, 6, 3, color=INK, lw=1.6, label="supporting line")
     if stage >= 3:
-        _dot(ax, 8, 0.02, r"$\tilde\omega$", 8, 6, colour=NEW)
-        _arrow(ax, (8, 8), (8, 0.3), NEW)
+        gp.dot(ax, 8, 0.02, r"$\tilde\omega$", 8, 6, colour=NEW)
+        gp.arrow(ax, (8, 8), (8, 0.3), NEW)
         ax.text(8.2, 4.2, "transfer", color=NEW, fontsize=9)
     if stage >= 5:
         _lens(ax, e, 8, 8, label="lens through " + r"$\omega$")
@@ -940,7 +874,7 @@ def draw_theorems(ax, stage):
         xs = np.linspace(lo, hi, 50)
         ax.plot(xs, [e.contract(v) for v in xs], color=NEW, lw=5, alpha=0.8,
                 solid_capstyle="round", label="core")
-    _legend(ax, loc="upper left")
+    gp.legend(ax, loc="upper left")
 
 
 FIRST_OK = "Competitive equilibrium ⇒ Pareto efficient, with no externalities and no market power"

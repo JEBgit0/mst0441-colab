@@ -13,10 +13,9 @@ Released with the session 4 solutions.
 import numpy as np
 
 import consumer_theory as ct
-from sandbox import (Lab, BEFORE, CURVE, DIRECT, INK, LINE, MUTE, NEW, legend, num,
-                     style_axes, table)
-from sandbox_s02 import greek
+from sandbox import Lab, html_label, legend, num, style_axes, table
 from sandbox_s03 import CES_NAME, EffectsLab
+from style import BEFORE, CURVE, INK, LINE, MUTE
 
 LOG = "Log"
 CRRA = "CRRA (beyond the notes)"
@@ -160,18 +159,11 @@ class ChoiceLab(Lab):
         self.w["m2"].description = "Income tomorrow m2"
         self.w["a1"].description = "Assets a1"
         self.w["r"].description = "Nominal rate r"
-        self.w["pi"].description = "Inflation &pi;"
-        self.w["beta"].description = "&beta;, patience"
+        html_label(self.w["pi"], "Inflation &pi;")
+        html_label(self.w["beta"], "&beta;, patience")
         crra = self.w["family"].value == CRRA
-        self.w["sigma"].description = "&sigma;, curvature" if crra else "&sigma; (CRRA only)"
+        html_label(self.w["sigma"], "&sigma;, curvature" if crra else "&sigma; (CRRA only)")
         self.w["sigma"].disabled = not crra
-        for key in ("pi", "beta", "sigma"):
-            w = self.w[key]
-            if hasattr(w, "description_allow_html"):
-                w.description_allow_html = True
-            else:
-                w.description = (w.description.replace("&pi;", "pi")
-                                 .replace("&beta;", "beta").replace("&sigma;", "sigma"))
 
     def model(self, v, no_credit):
         rho, b = lifetime_budget(v, no_credit)
@@ -312,11 +304,7 @@ class TwoLab(Lab):
                      mB1="Household 1 m1", mB2="Household 1 m2", bL="Household 2 &beta;",
                      mL1="Household 2 m1", mL2="Household 2 m2")
         for k, d in names.items():
-            self.w[k].description = d
-            if hasattr(self.w[k], "description_allow_html"):
-                self.w[k].description_allow_html = True
-            else:
-                self.w[k].description = d.replace("&beta;", "beta")
+            html_label(self.w[k], d)
         self.compare.layout.display = "none"     # old vs new rate is built in
 
     def compute(self):

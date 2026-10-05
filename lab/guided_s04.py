@@ -9,32 +9,19 @@ guided_s04.py - session 4 guided page: intertemporal choice.
     Part 6  lifetime   problem A4.3: assets, windfalls and a credit limit
 
 Answers are hashes in answers_s04.py, generated from
-answer_keys/s04_keys.py in the private repo (see guided_s03.py for the scheme).
+answer_keys/s04_keys.py in the private repo (see answers() in guided.py).
 """
 
 import numpy as np
 
-from guided import BOX, GuidedProblem, Question, tag
-from guided_s03 import (CURVE, GREEN, GREY, HALF, INK, LINE, MUTE, NEW, _dot, _frame,
-                        _legend, _start)
+import guided_plots as gp
+from guided import BOX, NOTES, PS, GuidedProblem, Question, answers
+from style import CURVE, GREEN, GREY, HALF, INK, LINE, MUTE, NEW
 
-try:
-    from answers_s04 import HASHES
-except ImportError:
-    HASHES = {}
+H, M = answers("s04")
 
-PS = lambda part: tag("problem", "Problem " + part)
-NOTES = lambda where: tag("notes", "Notes " + where)
 C1, C2, M1, M2 = "c<sub>1</sub>", "c<sub>2</sub>", "m<sub>1</sub>", "m<sub>2</sub>"
 X1, X2 = "x<sub>1</sub>", "x<sub>2</sub>"
-
-
-def H(key):
-    return HASHES.get(key, "missing:" + key)
-
-
-def M(messages):
-    return {H(k): v for k, v in messages.items()}
 
 
 def _iline(ax, r, m1, m2, **kw):
@@ -53,11 +40,6 @@ def _endowment(ax, m1, m2, label="e", colour=LINE, dx=8, dy=4):
     ax.plot([m1], [m2], "s", color=colour, ms=7, zorder=6)
     ax.annotate(label, (m1, m2), textcoords="offset points", xytext=(dx, dy),
                 color=colour, fontsize=10.5)
-
-
-def _arrow(ax, start, end, colour=INK):
-    ax.annotate("", xy=end, xytext=start,
-                arrowprops=dict(arrowstyle="-|>", color=colour, lw=1.3, shrinkA=6, shrinkB=6))
 
 
 UPLEFT = "Only the part up and to the left of e: saving still works"
@@ -121,12 +103,12 @@ DEP_TAX = "It depends on the prices"
 # ======================================================================
 
 def draw_budget(ax, stage):
-    _frame(ax, 150, 165, "c1   (today)", "c2   (tomorrow)")
+    gp.frame(ax, 150, 165, "c1   (today)", "c2   (tomorrow)")
     _endowment(ax, 60, 63, r"$e = (m_1, m_2)$")
     if stage >= 1:
-        _dot(ax, 120, 0, r"$m_1 + \frac{m_2}{1+r}$", 6, 10, colour=LINE)
+        gp.dot(ax, 120, 0, r"$m_1 + \frac{m_2}{1+r}$", 6, 10, colour=LINE)
     if stage >= 2:
-        _dot(ax, 0, 126, r"$(1+r)m_1 + m_2$", 8, -4, colour=LINE)
+        gp.dot(ax, 0, 126, r"$(1+r)m_1 + m_2$", 8, -4, colour=LINE)
     if stage < 3:
         return
     style = dict(color=LINE, lw=2.2, zorder=4, label=r"budget, slope $-(1+r)$")
@@ -144,7 +126,7 @@ def draw_budget(ax, stage):
         _endowment(ax, 80, 63, "e'", colour=HALF, dx=6, dy=-14)
     if stage >= 6:
         _iline(ax, 0.25, 60, 63, color=NEW, lw=1.8, ls="--", label=r"$r \uparrow$: pivot around e")
-    _legend(ax)
+    gp.legend(ax)
 
 
 BUDGET_QUESTIONS = [
@@ -231,29 +213,29 @@ budget = GuidedProblem(
 # ======================================================================
 
 def draw_kari(ax, stage):
-    _frame(ax, 118, 140, "c1", "c2")
+    gp.frame(ax, 118, 140, "c1", "c2")
     _endowment(ax, 50, 60, "e = (50, 60)", dx=-62, dy=6)
     if stage >= 1:
         _iline(ax, 0.2, 50, 60, color=LINE, lw=2.2, zorder=4, label="Kari's budget")
         ax.fill_between([0, 100], [120, 0], 0, color=LINE, alpha=0.06, lw=0)
     if stage >= 2:
         _log_curve(ax, 2 / 3, 60, 48, 118, color=CURVE, lw=2, zorder=4)
-        _dot(ax, 60, 48, "", colour=CURVE)
+        gp.dot(ax, 60, 48, "", colour=CURVE)
     if stage >= 3:
-        _arrow(ax, (50, 60), (60, 48), CURVE)
+        gp.arrow(ax, (50, 60), (60, 48), CURVE)
         ax.text(14, 22, "e -> optimum: borrow today,\nrepay with interest tomorrow",
                 color=CURVE, fontsize=9)
     if stage >= 4:
         _log_curve(ax, 0.25, 80, 24, 118, color=HALF, lw=1.4, ls="--", alpha=0.7)
-        _dot(ax, 80, 24, "Sondre", 6, 6, colour=HALF)
+        gp.dot(ax, 80, 24, "Sondre", 6, 6, colour=HALF)
     if stage >= 5:
         _iline(ax, 0.2, 50, 72, color=GREEN, lw=1.8, ls="--", label="bonus next year")
-        _dot(ax, 66, 52.8, "", colour=GREEN)
+        gp.dot(ax, 66, 52.8, "", colour=GREEN)
     if stage >= 6:
         xs = np.array([0, 100])
         ax.plot(xs, 0.8 * xs, color=MUTE, lw=1, ls=":",
                 label=r"$c_2 = \beta(1+r)\,c_1$")
-    _legend(ax)
+    gp.legend(ax)
 
 
 KARI_QUESTIONS = [
@@ -341,21 +323,21 @@ kari = GuidedProblem(
 
 def draw_worksheet(fig, stage):
     ax, rx = fig.subplots(1, 2)
-    _frame(ax, 140, 150, "c1", "c2")
+    gp.frame(ax, 140, 150, "c1", "c2")
     ax.set_title("The budget line", loc="left", color=INK, fontsize=10)
     _iline(ax, 0.05, 60, 63, color=LINE, lw=2.2, zorder=4)
     _endowment(ax, 60, 63, "e", dx=8, dy=4)
     if stage >= 1:
         _log_curve(ax, 0.5, 80, 42, 140, color=CURVE, lw=1.8)
-        _dot(ax, 80, 42, r"$\beta = 1/2$", 6, 6)
+        gp.dot(ax, 80, 42, r"$\beta = 1/2$", 6, 6)
     if stage >= 2:
-        _arrow(ax, (60, 63), (80, 42), CURVE)
+        gp.arrow(ax, (60, 63), (80, 42), CURVE)
     if stage >= 3:
         _log_curve(ax, 1.0, 60, 63, 140, color=HALF, lw=1.6, ls="--")
         ax.annotate(r"$\beta = 1$: at e", (60, 63), textcoords="offset points",
                     xytext=(-10, -18), ha="right", color=HALF, fontsize=10)
 
-    _frame(rx, 140, 150, "c1", "c2")
+    gp.frame(rx, 140, 150, "c1", "c2")
     rx.set_title("The rate rise", loc="left", color=INK, fontsize=10)
     _iline(rx, 0.05, 60, 63, color=GREY, lw=1.8, label="r = 5%")
     _endowment(rx, 60, 63, "e", dx=8, dy=4)
@@ -369,7 +351,7 @@ def draw_worksheet(fig, stage):
         new = np.maximum(0, 63 - 1.25 * (xs - 60))
         rx.fill_between(xs, new, old, color=NEW, alpha=0.15, lw=0)
         rx.text(84, 30, "lost:\nborrowers", color=NEW, fontsize=9.5)
-    _legend(rx)
+    gp.legend(rx)
     fig.subplots_adjust(wspace=0.25)
 
 
@@ -460,14 +442,14 @@ def draw_rates(fig, stage):
     # borrower, left of e for the lender.
     for ax, (m1, m2), name, opt in ((bx, (20, 100), "the borrower: income late", (60, 56)),
                                     (lx, (100, 20), "the lender: income early", (55, 69.5))):
-        _frame(ax, 150, 160, "c1", "c2")
+        gp.frame(ax, 150, 160, "c1", "c2")
         ax.set_title(name, loc="left", color=INK, fontsize=10)
         _iline(ax, 0.10, m1, m2, color=LINE, lw=2, label="r")
         _endowment(ax, m1, m2, "e", dx=8, dy=4)
-        _dot(ax, opt[0], opt[1], "", colour=CURVE)
+        gp.dot(ax, opt[0], opt[1], "", colour=CURVE)
         if stage >= 3:
             _iline(ax, 0.40, m1, m2, color=NEW, lw=1.8, ls="--", label=r"$r \uparrow$")
-        _legend(ax)
+        gp.legend(ax)
     if stage >= 3:
         bx.text(0.97, 0.72, "worse off", transform=bx.transAxes, ha="right", color=NEW,
                 fontsize=10)
@@ -549,34 +531,34 @@ def draw_taxes(fig, stage):
     sx, cx = fig.subplots(1, 2)
     for ax, title in ((sx, r"A4.1: $U = \frac{1}{2}x_1 + \frac{1}{2}x_2$"),
                       (cx, r"A4.2: $U = x_1^{1/2}x_2^{1/2}$")):
-        _frame(ax, 12, 14, "x1", "x2")
+        gp.frame(ax, 12, 14, "x1", "x2")
         ax.set_title(title, loc="left", color=INK, fontsize=10)
         ax.plot([0, 10], [12, 0], color=LINE, lw=2, label="before the tax")
     for k in (4, 8, 12):
         sx.plot([0, k], [k, 0], color=CURVE, lw=0.8, ls=":", alpha=0.6)
     if stage >= 1:
-        _dot(sx, 0, 12, "", colour=CURVE)
+        gp.dot(sx, 0, 12, "", colour=CURVE)
     if stage >= 2:
         sx.plot([0, 10], [7.5, 0], color=NEW, lw=1.8, ls="--", label="60% tax on x2")
-        _dot(sx, 10, 0, "", colour=NEW)
+        gp.dot(sx, 10, 0, "", colour=NEW)
     if stage >= 3:
         sx.text(0.97, 0.75, "revenue: nothing to tax", transform=sx.transAxes, ha="right",
                 color=NEW, fontsize=9.5)
     xs = np.linspace(1.2, 12, 200)
     if stage >= 4:
         cx.plot(xs, 30 / xs, color=CURVE, lw=1.6)
-        _dot(cx, 5, 6, "", colour=CURVE)
+        gp.dot(cx, 5, 6, "", colour=CURVE)
     if stage >= 5:
         cx.plot([0, 10], [7.5, 0], color=NEW, lw=1.8, ls="--", label="60% tax on x2")
         cx.plot(xs, 18.75 / xs, color=NEW, lw=1, alpha=0.6)
-        _dot(cx, 5, 3.75, "", colour=NEW)
+        gp.dot(cx, 5, 3.75, "", colour=NEW)
     if stage >= 7:
         cx.plot([0, 243.75 / 30], [243.75 / 25, 0], color=GREEN, lw=1.8, ls=":",
                 label="income tax, same revenue")
         cx.plot(xs, 4.0625 * 4.875 / xs, color=GREEN, lw=1, alpha=0.6)
-        _dot(cx, 4.0625, 4.875, "", colour=GREEN)
-    _legend(sx)
-    _legend(cx)
+        gp.dot(cx, 4.0625, 4.875, "", colour=GREEN)
+    gp.legend(sx)
+    gp.legend(cx)
     fig.subplots_adjust(wspace=0.25)
 
 
@@ -674,14 +656,14 @@ taxes = GuidedProblem(
 # Drawn in thousands of kroner.
 
 def draw_lifetime(ax, stage):
-    _frame(ax, 125, 135, "c1   (thousands)", "c2   (thousands)")
+    gp.frame(ax, 125, 135, "c1   (thousands)", "c2   (thousands)")
     _endowment(ax, 15, 100, r"$e = (a_1 + m_1,\ m_2)$", dx=8, dy=4)
     if stage >= 1:
         _iline(ax, 0.05, 15, 100, color=LINE, lw=2.2, zorder=4, label="budget, r = 5%")
     if stage >= 2:
         _log_curve(ax, 1.0, 55.119, 57.875, 125, color=CURVE, lw=1.8)
-        _dot(ax, 55.119, 57.875, "", colour=CURVE)
-        _arrow(ax, (15, 100), (55.119, 57.875), CURVE)
+        gp.dot(ax, 55.119, 57.875, "", colour=CURVE)
+        gp.arrow(ax, (15, 100), (55.119, 57.875), CURVE)
     if stage >= 3:
         _iline(ax, 0.05, 25, 100, color=GREEN, lw=1.4, ls="--", alpha=1 if stage == 3 else 0.4,
                label=r"$m_1$ + 10")
@@ -694,8 +676,8 @@ def draw_lifetime(ax, stage):
     if stage >= 6:
         ax.axvline(15, color=MUTE, lw=1, ls=":")
         ax.text(17, 128, "no borrowing", color=MUTE, fontsize=9)
-        _dot(ax, 15, 100, "", colour=INK)
-    _legend(ax)
+        gp.dot(ax, 15, 100, "", colour=INK)
+    gp.legend(ax)
 
 
 LIFETIME_QUESTIONS = [

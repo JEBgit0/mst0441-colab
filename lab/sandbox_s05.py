@@ -12,8 +12,8 @@ Released with the session 5 solutions. The maths is uncertainty.py.
 import numpy as np
 
 import uncertainty as un
-from sandbox import (Lab, BEFORE, CURVE, DIRECT, INK, LINE, MUTE, NEW, legend, num,
-                     style_axes, table)
+from sandbox import Lab, html_label, legend, num, style_axes, table
+from style import BEFORE, CURVE, DIRECT, INK, LINE, MUTE, NEW
 
 SQRT, LOG, LIN, SQUARE = "sqrt(c) (risk averse)", "ln(c) (risk averse)", \
     "c (risk neutral)", "c squared (risk loving)"
@@ -23,15 +23,6 @@ KINDS = {SQRT: "sqrt", LOG: "log", LIN: "linear", SQUARE: "square", CRRA: "crra"
 
 def make_v(v):
     return un.V(KINDS[v["family"]], v.get("rho", 0.5))
-
-
-def greek_ok(widget, text):
-    widget.description = text
-    if hasattr(widget, "description_allow_html"):
-        widget.description_allow_html = True
-    else:
-        widget.description = (text.replace("&pi;", "pi").replace("&rho;", "rho")
-                              .replace("&beta;", "beta").replace("&mu;", "mu"))
 
 
 # ======================================================================
@@ -80,9 +71,9 @@ class RiskLab(Lab):
     def relabel(self):
         self.w["c1"].description = "Outcome c1"
         self.w["c2"].description = "Outcome c2"
-        greek_ok(self.w["p"], "Probability &pi; of c1")
+        html_label(self.w["p"], "Probability &pi; of c1")
         crra = self.w["family"].value == CRRA
-        greek_ok(self.w["rho"], "&rho;, curvature" if crra else "&rho; (CRRA only)")
+        html_label(self.w["rho"], "&rho;, curvature" if crra else "&rho; (CRRA only)")
         self.w["rho"].disabled = not crra
 
     def compute(self):
@@ -208,10 +199,10 @@ class InsuranceLab(Lab):
     def relabel(self):
         self.w["W"].description = "Wealth W"
         self.w["D"].description = "Loss D"
-        greek_ok(self.w["pi"], "Probability &pi;")
+        html_label(self.w["pi"], "Probability &pi;")
         self.w["q"].description = "Price q per krone"
         crra = self.w["family"].value == CRRA
-        greek_ok(self.w["rho"], "&rho;, curvature" if crra else "&rho; (CRRA only)")
+        html_label(self.w["rho"], "&rho;, curvature" if crra else "&rho; (CRRA only)")
         self.w["rho"].disabled = not crra
 
     def compute(self):
@@ -371,7 +362,7 @@ class AssetLab(Lab):
                      rf="Risk-free r_f (%)", mu_m="Market return (%)",
                      beta="Asset &beta;", mu_i="Asset return (%)")
         for k, d in names.items():
-            greek_ok(self.w[k], d)
+            html_label(self.w[k], d)
 
     def compute(self):
         v = self.values()

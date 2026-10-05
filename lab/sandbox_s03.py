@@ -14,10 +14,10 @@ drawing pieces are shared with sandbox_s02.py.
 import numpy as np
 
 import consumer_theory as ct
-from sandbox import (Lab, BEFORE, CURVE, DIRECT, INK, LINE, MUTE, NEW, legend, num,
-                     pct, style_axes, table)
+from sandbox import Lab, legend, num, pct, style_axes, table
 from sandbox_s02 import (CES_NAME, FAMILIES as COURSE_FAMILIES, choice_text,
                          draw_choice, greek, make_utility, preferences_text)
+from style import BEFORE, CURVE, DIRECT, INK, LINE, MUTE, NEW
 
 FAMILIES = COURSE_FAMILIES + [CES_NAME]
 # Families with a smooth tangency, where splitting a price change into

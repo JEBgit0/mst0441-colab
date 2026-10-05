@@ -16,11 +16,8 @@ import math
 import numpy as np
 
 import firms as fm
-from sandbox import (Lab, BEFORE, CURVE, DIRECT, INK, LINE, MUTE, NEW, legend, num,
-                     style_axes, table)
-from sandbox_s06 import html_ok
-
-GREYBAR = "#9ca3af"
+from sandbox import Lab, html_label, legend, num, style_axes, table
+from style import BEFORE, CURVE, GREY, INK, LINE, MUTE, NEW
 
 
 def pct_change(a, b):
@@ -104,7 +101,7 @@ class SubstitutionLab(Lab):
 
     def relabel(self):
         ces = self.w["family"].value == CES
-        html_ok(self.w["sigma"], "&sigma;" if ces else "&sigma; (CES only)")
+        html_label(self.w["sigma"], "&sigma;" if ces else "&sigma; (CES only)")
         self.w["sigma"].disabled = not ces
         self.w["w"].description = "Wage w"
         self.w["r"].description = "Rental r"
@@ -263,8 +260,8 @@ class TaskLab(Lab):
         self.w["w"].description = "Wage w"
         self.w["r"].description = "AI rental r"
         for i in (1, 2, 3):
-            html_ok(self.w["A%d" % i], "A<sub>%d</sub>, task %d" % (i, i))
-            html_ok(self.w["x%d" % i], "&chi;<sub>%d</sub>, cost share" % i)
+            html_label(self.w["A%d" % i], "A<sub>%d</sub>, task %d" % (i, i))
+            html_label(self.w["x%d" % i], "&chi;<sub>%d</sub>, cost share" % i)
         self.w["C0"].description = "All-labor order cost"
 
     def compute(self):
@@ -280,7 +277,7 @@ class TaskLab(Lab):
         s = st["live"]
         style_axes(bx)
         xs = np.arange(3)
-        bx.bar(xs, s["A"], color=[LINE if a else GREYBAR for a in s["auto"]], width=0.6)
+        bx.bar(xs, s["A"], color=[LINE if a else GREY for a in s["auto"]], width=0.6)
         bx.axhline(s["r"] / s["w"], color=INK, lw=1.6, ls="--", label="cutoff r/w = %s"
                    % num(s["r"] / s["w"]))
         if st["before"] is not None:
@@ -472,11 +469,11 @@ class TiltLab(Lab):
     ]
 
     def relabel(self):
-        html_ok(self.w["L"], "Workers L")
-        html_ok(self.w["aX"], "a<sub>X</sub>, output per worker")
-        html_ok(self.w["aY"], "a<sub>Y</sub>, output per worker")
-        html_ok(self.w["piX"], "&pi;<sub>X</sub>, labor saving")
-        html_ok(self.w["piY"], "&pi;<sub>Y</sub>, labor saving")
+        html_label(self.w["L"], "Workers L")
+        html_label(self.w["aX"], "a<sub>X</sub>, output per worker")
+        html_label(self.w["aY"], "a<sub>Y</sub>, output per worker")
+        html_label(self.w["piX"], "&pi;<sub>X</sub>, labor saving")
+        html_label(self.w["piY"], "&pi;<sub>Y</sub>, labor saving")
 
     def compute(self):
         v = self.values()

@@ -17,34 +17,19 @@ equilibrium.py.
 
 import numpy as np
 
+import edgeworth_plots as ed
+import guided_plots as gp
 from equilibrium import Economy
 from externality import Smoke
-from guided import BOX, GuidedProblem, Question, tag
-from guided_s03 import (CURVE, GREEN, GREY, HALF, INK, LINE, MUTE, NEW, _dot, _legend,
-                        _start)
-from guided_s04 import _arrow
-from guided_s06 import _box, _contract, _icA, _icB, _lens, _pline
+from guided import BOX, NOTES, PS, GuidedProblem, Question, answers
+from style import CURVE, GREEN, GREY, HALF, INK, LINE, MUTE, NEW, RED
 
-try:
-    from answers_s07 import HASHES
-except ImportError:
-    HASHES = {}
+H, M = answers("s07")
 
-PS = lambda part: tag("problem", "Problem " + part)
-NOTES = lambda where: tag("notes", "Notes " + where)
 XA, YA, XB, YB = "x<sub>A</sub>", "y<sub>A</sub>", "x<sub>B</sub>", "y<sub>B</sub>"
 X1A, X1B = "x<sup>1</sup><sub>A</sub>", "x<sup>1</sup><sub>B</sub>"
 MA, MB = "m<sub>A</sub>", "m<sub>B</sub>"
 A_COL, B_COL = LINE, CURVE
-RED = "#dc2626"
-
-
-def H(key):
-    return HASHES.get(key, "missing:" + key)
-
-
-def M(messages):
-    return {H(k): v for k, v in messages.items()}
 
 
 # ------------------------------------------------------- the smoke box ---
@@ -96,23 +81,23 @@ RECAP = Economy(1 / 3, 3 / 4, (6, 4), (6, 8))
 
 def draw_recap(ax, stage):
     e = RECAP
-    _box(ax, e.X, e.Y)
-    _dot(ax, 6, 4, r"$\omega$", 8, -12, colour=INK)
+    ed.box(ax, e.X, e.Y)
+    gp.dot(ax, 6, 4, r"$\omega$", 8, -12, colour=INK)
     if stage in (1,):
         for p in (0.5, 3):
-            _pline(ax, e, p, 6, 4, color=GREY, lw=1)
+            ed.price_line(ax, e, p, 6, 4, color=GREY, lw=1)
     if stage >= 2:
-        _pline(ax, e, 4 / 3, 6, 4, color=INK, lw=1.6, label="price line")
+        ed.price_line(ax, e, 4 / 3, 6, 4, color=INK, lw=1.6, label="price line")
     if stage >= 3:
-        _dot(ax, 3, 8, "(3, 8)", -8, 6, colour=GREEN, ha="right")
+        gp.dot(ax, 3, 8, "(3, 8)", -8, 6, colour=GREEN, ha="right")
     if stage >= 4:
-        _arrow(ax, (6, 4), (3, 8), GREEN)
+        gp.arrow(ax, (6, 4), (3, 8), GREEN)
     if stage >= 5:
-        _icA(ax, e, 3, 8, color=A_COL, lw=1.3, label="A")
-        _icB(ax, e, 3, 8, color=B_COL, lw=1.3, label="B")
+        ed.ic_a(ax, e, 3, 8, color=A_COL, lw=1.3, label="A")
+        ed.ic_b(ax, e, 3, 8, color=B_COL, lw=1.3, label="B")
     if stage >= 6:
-        _contract(ax, e, color=GREEN, lw=2, label="contract curve")
-    _legend(ax, loc="lower right")
+        ed.contract(ax, e, color=GREEN, lw=2, label="contract curve")
+    gp.legend(ax, loc="lower right")
 
 
 EXT_ASSUMPTION = "No externalities: each agent cares only about her own bundle"
@@ -209,15 +194,15 @@ def draw_define(ax, stage):
     qm, qs = 16 / 3, 10 / 3
     if stage >= 1:
         ax.plot(q, 5 + 0.5 * q, color=RED, lw=1.8, label="social cost")
-        _arrow(ax, (8.6, 6.3), (8.6, 9.0), RED)
+        gp.arrow(ax, (8.6, 6.3), (8.6, 9.0), RED)
         ax.text(8.75, 7.3, "damage", color=RED, fontsize=9)
     if stage >= 4:
-        _dot(ax, qm, 10 - qm, "market", 8, 4, colour=A_COL)
+        gp.dot(ax, qm, 10 - qm, "market", 8, 4, colour=A_COL)
     if stage >= 5:
-        _dot(ax, qs, 10 - qs, "efficient", -8, 6, colour=GREEN, ha="right")
+        gp.dot(ax, qs, 10 - qs, "efficient", -8, 6, colour=GREEN, ha="right")
         ax.fill([qs, qm, qm], [10 - qs, 10 - qm, 5 + 0.5 * qm], color=RED, alpha=0.18,
                 label="the loss")
-    _legend(ax, loc="upper right")
+    gp.legend(ax, loc="upper right")
 
 
 NEG = "A negative externality"
@@ -332,9 +317,9 @@ def draw_efficient(fig, stage):
         ax.plot(Ss, [e.mb(s) for s in Ss], color=A_COL, lw=2, label="A's marginal benefit")
         ax.plot(Ss, [e.md(s) for s in Ss], color=B_COL, lw=2, label="B's marginal damage")
     if stage >= 2:
-        _dot(ax, 0.25, 1, "S*", 8, 6, colour=GREEN)
+        gp.dot(ax, 0.25, 1, "S*", 8, 6, colour=GREEN)
         ax.axvline(0.25, color=GREEN, lw=0.8, ls=":")
-    _legend(ax, loc="upper center")
+    gp.legend(ax, loc="upper center")
 
     nl = fig.add_subplot(gs[1])
     nl.set_xlim(-0.05, 1.05)
@@ -447,22 +432,22 @@ HOME = Smoke("log", 1, 3, 6, 6)
 def draw_pricing(ax, stage):
     e = HOME
     _sbox(ax, 12)
-    _dot(ax, 6, 1, r"$e_A$", 8, -14, colour=MUTE)
-    _dot(ax, 6, 0, r"$e_B$", 8, 6, colour=MUTE)
+    gp.dot(ax, 6, 1, r"$e_A$", 8, -14, colour=MUTE)
+    gp.dot(ax, 6, 0, r"$e_B$", 8, 6, colour=MUTE)
     if stage >= 1:
         ax.axhline(0.25, color=GREEN, lw=2, label="contract curve")
     if stage >= 2:
         _s_budget(ax, 6, 0, 4, color=INK, lw=1.6, label="budget line")
     if stage >= 3:
-        _dot(ax, 5, 0.25, "B's right", -8, 8, colour=NEW, ha="right")
+        gp.dot(ax, 5, 0.25, "B's right", -8, 8, colour=NEW, ha="right")
         _s_icA(ax, e, 5, 0.25, color=A_COL, lw=1.2)
         _s_icB(ax, e, 5, 0.25, color=B_COL, lw=1.2)
     if stage >= 4:
         _s_budget(ax, 6, 1, 4, color=INK, lw=1.6, ls="--")
-        _dot(ax, 9, 0.25, "A's right", 8, 8, colour=NEW)
+        gp.dot(ax, 9, 0.25, "A's right", 8, 8, colour=NEW)
         _s_icA(ax, e, 9, 0.25, color=A_COL, lw=1.2, ls="--")
         _s_icB(ax, e, 9, 0.25, color=B_COL, lw=1.2, ls="--")
-    _legend(ax, loc="center right")
+    gp.legend(ax, loc="center right")
 
 
 EFF_INV = "Efficiency: with clear, tradable rights and low transaction costs, bargaining reaches the efficient level. Invariance: that level is the same whoever holds the right, and this one needs quasi-linearity"
@@ -650,16 +635,16 @@ def draw_trade(ax, stage):
     e = TRADE
     if stage == 0:
         ax.axis("off")
-        _start(ax)
+        gp.start(ax)
         return
-    _box(ax, e.X, e.Y)
-    _dot(ax, 10, 25, r"$\omega$", 8, -12, colour=INK)
+    ed.box(ax, e.X, e.Y)
+    gp.dot(ax, 10, 25, r"$\omega$", 8, -12, colour=INK)
     if stage >= 3:
-        _contract(ax, e, color=GREEN, lw=2, label="contract curve")
+        ed.contract(ax, e, color=GREEN, lw=2, label="contract curve")
         for x in (4, 10):
-            _icA(ax, e, x, 2 * x, color=A_COL, lw=1)
-            _icB(ax, e, x, 2 * x, color=B_COL, lw=1)
-    _legend(ax, loc="lower right")
+            ed.ic_a(ax, e, x, 2 * x, color=A_COL, lw=1)
+            ed.ic_b(ax, e, x, 2 * x, color=B_COL, lw=1)
+    gp.legend(ax, loc="lower right")
 
 
 CANCEL = "Identical tastes: the cross terms cancel on both sides, leaving no curvature"
@@ -747,7 +732,7 @@ def _air_levels(x, P):
 
 def draw_air(ax, stage):
     _sbox(ax, 12, "P", "C")
-    _dot(ax, 6, 1, "M", 8, -14, colour=INK)
+    gp.dot(ax, 6, 1, "M", 8, -14, colour=INK)
     uA, uB = _air_levels(6, 1)
     if stage >= 1:
         _air_icA(ax, uA, color=A_COL, lw=1.3)
@@ -763,14 +748,14 @@ def draw_air(ax, stage):
         _s_budget(ax, 6, 1, -q, color=GREY, lw=1.4, label="price too low")
         for who, col in (("A", A_COL), ("B", B_COL)):
             x, Pp = _air_point(q, who)
-            _dot(ax, x, Pp, "", colour=col)
+            gp.dot(ax, x, Pp, "", colour=col)
     if stage >= 5:
         q = 4 / 3
         _s_budget(ax, 6, 1, -q, color=INK, lw=1.6, label="clearing price")
         x, Pp = _air_point(q, "A")
-        _dot(ax, x, Pp, "E", 8, 4, colour=GREEN)
+        gp.dot(ax, x, Pp, "E", 8, 4, colour=GREEN)
         ax.axhline(1 / 3, color=GREEN, lw=1.6, ls="--", label="contract curve")
-    _legend(ax, loc="lower right")
+    gp.legend(ax, loc="lower right")
 
 
 NO_COST = "B pollutes fully, P = 1: clean air is missing from B's budget, so B never faces the cost to A, and at that corner A would pay more for cleaner air than B needs to give it up"
@@ -884,27 +869,27 @@ def _invariance_layer(ax, stage, zoom):
     # At p = 1 a budget line moves good 1 by at most one unit, a sliver of
     # the 20-wide box, so the inset repeats the picture zoomed in.
     e = INV
-    _dot(ax, 5, 1, r"$e_A$", 8, -14, colour=MUTE)
-    _dot(ax, 5, 0, r"$e_B$", 8, 6, colour=MUTE)
+    gp.dot(ax, 5, 1, r"$e_A$", 8, -14, colour=MUTE)
+    gp.dot(ax, 5, 0, r"$e_B$", 8, 6, colour=MUTE)
     if stage >= 1:
         ax.axhline(1 / 3, color=GREEN, lw=2, label=None if zoom else "contract curve")
     if stage >= 2:
         _s_budget(ax, 5, 0, 1, color=INK, lw=1.6, label=None if zoom else "budget, B owns")
     if stage >= 3:
-        _dot(ax, 14 / 3, 1 / 3, "B owns" if zoom else "", -8, 8, colour=NEW, ha="right")
+        gp.dot(ax, 14 / 3, 1 / 3, "B owns" if zoom else "", -8, 8, colour=NEW, ha="right")
         if zoom:
             _s_icA(ax, e, 14 / 3, 1 / 3, color=A_COL, lw=1.1)
             _s_icB(ax, e, 14 / 3, 1 / 3, color=B_COL, lw=1.1)
     if stage >= 4:
         _s_budget(ax, 5, 1, 1, color=INK, lw=1.6, ls="--",
                   label=None if zoom else "budget, A owns")
-        _dot(ax, 17 / 3, 1 / 3, "A owns" if zoom else "", 8, 8, colour=NEW)
+        gp.dot(ax, 17 / 3, 1 / 3, "A owns" if zoom else "", 8, 8, colour=NEW)
 
 
 def draw_invariance(ax, stage):
     _sbox(ax, 20)
     _invariance_layer(ax, stage, zoom=False)
-    _legend(ax, loc="upper right")
+    gp.legend(ax, loc="upper right")
     if stage >= 2:
         z = ax.inset_axes([0.4, 0.06, 0.42, 0.6])
         z.set_xlim(3.6, 6.8)

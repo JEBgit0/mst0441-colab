@@ -12,8 +12,8 @@ number in the session 2 solutions; this file only arranges and draws it.
 import numpy as np
 
 import consumer_theory as ct
-from sandbox import (Lab, BEFORE, CURVE, DIRECT, INK, LINE, MUTE, legend, num,
-                     pct, style_axes, table)
+from sandbox import Lab, html_label, legend, num, pct, style_axes, table
+from style import BEFORE, CURVE, DIRECT, INK, LINE, MUTE
 
 FAMILIES = ["Cobb-Douglas", "Log", "Perfect substitutes", "Perfect complements",
             "Quasilinear"]
@@ -83,18 +83,10 @@ def choice_text(ch, budget, required):
 
 
 def greek(widgets):
-    # Greek letters need HTML in a slider description. ipywidgets 8 has a flag
-    # for it; older versions (Colab may still ship 7) would show "&alpha;" as
-    # text, so fall back to plain letters there.
+    # The preference sliders are labelled with Greek letters.
     for key in ("a", "b", "s"):
-        if key not in widgets:
-            continue
-        w = widgets[key]
-        if hasattr(w, "description_allow_html"):
-            w.description_allow_html = True
-        else:
-            w.description = (w.description.replace("&alpha;", "alpha")
-                             .replace("&beta;", "beta").replace("&sigma;", "sigma"))
+        if key in widgets:
+            html_label(widgets[key], widgets[key].description)
 
 
 # ---------------------------------------------------------------- drawing ---

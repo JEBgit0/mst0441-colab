@@ -16,9 +16,9 @@ import math
 import numpy as np
 
 from externality import Smoke
-from sandbox import (Lab, BEFORE, CURVE, DIRECT, INK, LINE, MUTE, NEW, legend, num,
-                     style_axes, table)
-from sandbox_s06 import WORKED, MarketLab, html_ok
+from sandbox import Lab, html_label, legend, num, style_axes, table
+from sandbox_s06 import WORKED, MarketLab
+from style import BEFORE, CURVE, DIRECT, INK, LINE, MUTE, NEW
 
 A_COL, B_COL, CC = LINE, CURVE, DIRECT
 
@@ -121,10 +121,10 @@ class SmokeLab(Lab):
     ]
 
     def relabel(self):
-        html_ok(self.w["alpha"], "&alpha;: A's taste for smoke")
-        html_ok(self.w["beta"], "&beta;: B's taste for air")
-        html_ok(self.w["wA"], "A's good 1, &omega;<sub>A</sub>")
-        html_ok(self.w["wB"], "B's good 1, &omega;<sub>B</sub>")
+        html_label(self.w["alpha"], "&alpha;: A's taste for smoke")
+        html_label(self.w["beta"], "&beta;: B's taste for air")
+        html_label(self.w["wA"], "A's good 1, &omega;<sub>A</sub>")
+        html_label(self.w["wB"], "B's good 1, &omega;<sub>B</sub>")
 
     def compute(self):
         v = self.values()

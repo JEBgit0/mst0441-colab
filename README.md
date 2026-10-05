@@ -64,7 +64,12 @@ Inside `lab/`:
 | `answers_sNN.py` | Salted hashes of the answers for session NN. Generated, do not edit by hand. |
 | `sandbox.py` | The base class for the sandbox labs. |
 | `sandbox_sNN.py` | The labs for session NN. |
+| `style.py` | The colours, and the drawing of a figure to an image. Shared by both kinds of page. |
+| `guided_plots.py` | Small drawing helpers for the guided figures: frame, dot, arrow, legend. |
+| `edgeworth_plots.py` | Drawing an Edgeworth box, for sessions 6 and 7. |
 | `consumer_theory.py`, `uncertainty.py`, `equilibrium.py`, `externality.py`, `firms.py` | The economics: the maths behind sessions 2 to 4, 5, 6, 7 and 8. |
+
+The files depend on each other in one direction only: a notebook imports a session file, and a session file imports the engines, the shared drawing files and the economics. A sandbox may build on an earlier session's sandbox where the course does the same (session 4 reuses session 3's labs, session 7 reuses session 6's).
 
 ## About the answers
 

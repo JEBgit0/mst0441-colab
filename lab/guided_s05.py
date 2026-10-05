@@ -17,30 +17,16 @@ answer_keys/s05_keys.py in the private repo.
 
 import numpy as np
 
+import guided_plots as gp
 import uncertainty as un
-from guided import BOX, GuidedProblem, Question, tag
-from guided_s03 import (CURVE, GREEN, GREY, HALF, INK, LINE, MUTE, NEW, _dot, _frame,
-                        _legend)
-from guided_s04 import _arrow
+from guided import BOX, NOTES, PS, GuidedProblem, Question, answers
+from style import CURVE, GREEN, GREY, HALF, INK, LINE, MUTE, NEW
 
-try:
-    from answers_s05 import HASHES
-except ImportError:
-    HASHES = {}
+H, M = answers("s05")
 
-PS = lambda part: tag("problem", "Problem " + part)
-NOTES = lambda where: tag("notes", "Notes " + where)
 CTX = ("<span style='background:#fef3c7;color:#b45309;border-radius:4px;padding:1px 6px'>"
        "context: not on the session 5 exam rubric</span> ")
 CG, CB = "c<sub>good</sub>", "c<sub>bad</sub>"
-
-
-def H(key):
-    return HASHES.get(key, "missing:" + key)
-
-
-def M(messages):
-    return {H(k): v for k, v in messages.items()}
 
 
 def _certainty(ax, top):
@@ -48,7 +34,7 @@ def _certainty(ax, top):
 
 
 def _contingent_frame(ax, top, scale=""):
-    _frame(ax, top, top, "c_bad" + scale, "c_good" + scale)
+    gp.frame(ax, top, top, "c_bad" + scale, "c_good" + scale)
 
 
 def _ins_line(ax, W, D, q, Kmax, **kw):
@@ -82,33 +68,33 @@ def _vcurve(ax, v, top, **kw):
 
 def draw_prices(fig, stage):
     tl, pc = fig.subplots(1, 2)
-    _frame(tl, 11, 470, "year t", "PV of the payment")
+    gp.frame(tl, 11, 470, "year t", "PV of the payment")
     tl.set_title("The bond, payment by payment", loc="left", color=INK, fontsize=10)
     if stage >= 1:
         ts = np.arange(1, 11)
         tl.bar(ts, 100 / 1.1 ** ts, color=LINE, alpha=0.75, label="coupons")
         tl.bar([10], [1000 / 1.1 ** 10], bottom=[100 / 1.1 ** 10], color=HALF, alpha=0.75,
                label="face value")
-        _legend(tl)
+        gp.legend(tl)
     if stage >= 2:
         tl.text(0.03, 0.9, "drop the coupons:\nonly the purple bar is left",
                 transform=tl.transAxes, color=HALF, fontsize=9)
 
-    _frame(pc, 0.115, 55, "interest rate r", "price per krone a year,  1/r")
+    gp.frame(pc, 0.115, 55, "interest rate r", "price per krone a year,  1/r")
     pc.set_title("A perpetuity: PV = x/r", loc="left", color=INK, fontsize=10)
     if stage >= 3:
         rs = np.linspace(0.018, 0.115, 200)
         pc.plot(rs, 1 / rs, color=CURVE, lw=2)
-        _dot(pc, 0.10, 10, "bond, 10%", 6, 4)
+        gp.dot(pc, 0.10, 10, "bond, 10%", 6, 4)
     if stage >= 4:
-        _dot(pc, 0.05, 20, "house, 5%", 6, 4, colour=LINE)
-        _dot(pc, 0.025, 40, "house, 2.5%", 6, 4, colour=LINE)
+        gp.dot(pc, 0.05, 20, "house, 5%", 6, 4, colour=LINE)
+        gp.dot(pc, 0.025, 40, "house, 2.5%", 6, 4, colour=LINE)
     if stage >= 5:
-        _dot(pc, 0.02, 50, "market: rent/price", 6, -2, colour=GREEN)
+        gp.dot(pc, 0.02, 50, "market: rent/price", 6, -2, colour=GREEN)
     if stage >= 7:
-        _dot(pc, 0.04, 25, "cabin 4%", 6, 4, colour=NEW)
-        _dot(pc, 0.06, 1 / 0.06, "cabin 6%", 6, 4, colour=NEW)
-        _arrow(pc, (0.04, 25), (0.06, 1 / 0.06), NEW)
+        gp.dot(pc, 0.04, 25, "cabin 4%", 6, 4, colour=NEW)
+        gp.dot(pc, 0.06, 1 / 0.06, "cabin 6%", 6, 4, colour=NEW)
+        gp.arrow(pc, (0.04, 25), (0.06, 1 / 0.06), NEW)
     fig.subplots_adjust(wspace=0.3)
 
 
@@ -193,29 +179,29 @@ prices = GuidedProblem(
 
 def draw_attitudes(ax, stage):
     A = un.V("sqrt")
-    _frame(ax, 520, 24, "wealth c", "v(c)")
+    gp.frame(ax, 520, 24, "wealth c", "v(c)")
     _vcurve(ax, A, 520, color=CURVE, lw=2, label=r"$v(c) = \sqrt{c}$")
     if stage >= 1:
         ax.plot([100, 400], [10, 20], color=LINE, lw=1.4, label="gamble one")
-        _dot(ax, 100, 10, "100", -8, 6, colour=LINE, ha="right")
-        _dot(ax, 400, 20, "400", -8, 6, colour=LINE, ha="right")
+        gp.dot(ax, 100, 10, "100", -8, 6, colour=LINE, ha="right")
+        gp.dot(ax, 400, 20, "400", -8, 6, colour=LINE, ha="right")
         ax.axvline(250, color=MUTE, lw=0.8, ls=":")
         ax.text(255, 1, "EV", color=MUTE, fontsize=9)
     if stage >= 2:
-        _dot(ax, 250, 15, "EU", 6, -14, colour=LINE)
-        _dot(ax, 250, 250 ** 0.5, "v(EV)", -6, 6, colour=CURVE, ha="right")
+        gp.dot(ax, 250, 15, "EU", 6, -14, colour=LINE)
+        gp.dot(ax, 250, 250 ** 0.5, "v(EV)", -6, 6, colour=CURVE, ha="right")
     if stage >= 4:
         ax.plot([0, 225], [15, 15], color=GREEN, lw=1, ls="--")
-        _dot(ax, 225, 15, "CE", -6, 6, colour=GREEN, ha="right")
+        gp.dot(ax, 225, 15, "CE", -6, 6, colour=GREEN, ha="right")
         ax.annotate("", xy=(225, 13.2), xytext=(250, 13.2),
                     arrowprops=dict(arrowstyle="<->", color=GREEN, lw=1.2))
         ax.text(237, 11.6, "premium", color=GREEN, fontsize=8.5, ha="center")
     if stage >= 5:
         ax.plot([16, 484], [4, 22], color=NEW, lw=1.4, ls="--", label="gamble two")
-        _dot(ax, 16, 4, "", colour=NEW)
-        _dot(ax, 484, 22, "", colour=NEW)
-        _dot(ax, 169, 13, "CE two", -6, 6, colour=NEW, ha="right")
-    _legend(ax, loc="lower right")
+        gp.dot(ax, 16, 4, "", colour=NEW)
+        gp.dot(ax, 484, 22, "", colour=NEW)
+        gp.dot(ax, 169, 13, "CE two", -6, 6, colour=NEW, ha="right")
+    gp.legend(ax, loc="lower right")
 
 
 A_PAYS = "Only A, with v = sqrt(c)"
@@ -310,28 +296,28 @@ def draw_worksheet(fig, stage):
     ins.set_title("Insurance", loc="left", color=INK, fontsize=10)
     _certainty(ins, 115)
     if stage >= 1:
-        _dot(ins, 50, 100, "e = (50, 100)", 6, 4, colour=LINE)
+        gp.dot(ins, 50, 100, "e = (50, 100)", 6, 4, colour=LINE)
     if stage >= 2:
         _ins_line(ins, 100, 50, 0.2, 60, color=LINE, lw=2, label="budget, fair q")
     if stage >= 3:
-        _dot(ins, 90, 90, "(90, 90)", 6, -14, colour=CURVE)
-        _arrow(ins, (50, 100), (90, 90), CURVE)
+        gp.dot(ins, 90, 90, "(90, 90)", 6, -14, colour=CURVE)
+        gp.arrow(ins, (50, 100), (90, 90), CURVE)
         v = un.V("sqrt")
         _eu_curve(ins, v, 0.2, v(90), 115, color=CURVE, lw=1.4)
-    _legend(ins, loc="lower right")
+    gp.legend(ins, loc="lower right")
 
     v = un.V("sqrt")
-    _frame(lot, 18, 4.6, "wealth c", "v(c)")
+    gp.frame(lot, 18, 4.6, "wealth c", "v(c)")
     lot.set_title(r"Risk premium, $v = \sqrt{c}$", loc="left", color=INK, fontsize=10)
     _vcurve(lot, v, 18, color=CURVE, lw=2)
-    _dot(lot, 4, 2, "4", -6, 6, colour=LINE, ha="right")
-    _dot(lot, 16, 4, "16", -6, 6, colour=LINE, ha="right")
+    gp.dot(lot, 4, 2, "4", -6, 6, colour=LINE, ha="right")
+    gp.dot(lot, 16, 4, "16", -6, 6, colour=LINE, ha="right")
     if stage >= 5:
         lot.plot([4, 16], [2, 4], color=LINE, lw=1.4)
-        _dot(lot, 10, 3, "EU at c = 10", 6, -14, colour=LINE)
+        gp.dot(lot, 10, 3, "EU at c = 10", 6, -14, colour=LINE)
     if stage >= 6:
         lot.plot([0, 9], [3, 3], color=GREEN, lw=1, ls="--")
-        _dot(lot, 9, 3, "CE", -6, 6, colour=GREEN, ha="right")
+        gp.dot(lot, 9, 3, "CE", -6, 6, colour=GREEN, ha="right")
         lot.annotate("", xy=(9, 2.6), xytext=(10, 2.6),
                      arrowprops=dict(arrowstyle="<->", color=GREEN, lw=1.2))
         lot.text(9.5, 2.3, "premium", color=GREEN, fontsize=8.5, ha="center")
@@ -422,12 +408,12 @@ def draw_ingrid(ax, stage):
     _contingent_frame(ax, 125)
     _certainty(ax, 125)
     if stage >= 1:
-        _dot(ax, 36, 100, "e", 6, 4, colour=LINE)
+        gp.dot(ax, 36, 100, "e", 6, 4, colour=LINE)
     if stage >= 2:
         _ins_line(ax, 100, 64, 0.25, 64, color=LINE, lw=2, label="fair, q = 1/4",
                   alpha=1 if stage < 5 else 0.45)
     if stage >= 3:
-        _dot(ax, 84, 84, "(84, 84)", 6, -14, colour=CURVE)
+        gp.dot(ax, 84, 84, "(84, 84)", 6, -14, colour=CURVE)
         _eu_curve(ax, v, 0.25, v(84), 125, color=CURVE, lw=1.4)
     if stage >= 4:
         _eu_curve(ax, v, 0.25, 9, 125, color=GREY, lw=1.2, ls=":")
@@ -437,8 +423,8 @@ def draw_ingrid(ax, stage):
     if stage >= 7:
         k = un.optimal_coverage(v, 100, 64, 0.25, 1 / 3)
         g, b = un.states(100, 64, 1 / 3, k)
-        _dot(ax, b, g, "partial cover", 6, 6, colour=NEW)
-    _legend(ax, loc="lower right")
+        gp.dot(ax, b, g, "partial cover", 6, 6, colour=NEW)
+    gp.legend(ax, loc="lower right")
 
 
 ABOVE = "Above the certainty line: she keeps some risk"
@@ -547,16 +533,16 @@ ingrid = GuidedProblem(
 def draw_car(ax, stage):
     _contingent_frame(ax, 56, " (thousands)")
     _certainty(ax, 56)
-    _dot(ax, 0, 50, "e: car not stolen", 6, 4, colour=LINE)
+    gp.dot(ax, 0, 50, "e: car not stolen", 6, 4, colour=LINE)
     if stage >= 1:
         _ins_line(ax, 50, 50, 0.05, 50, color=LINE, lw=2, label="q = 0.05")
     if stage >= 2:
-        _dot(ax, 9.5, 49.5, "K* = 10", 6, -14, colour=CURVE)
+        gp.dot(ax, 9.5, 49.5, "K* = 10", 6, -14, colour=CURVE)
     if stage >= 4:
         _ins_line(ax, 50, 50, 0.01, 50, color=GREEN, lw=1.8, ls="--", label="fair, q = 0.01")
     if stage >= 5:
-        _dot(ax, 49.5, 49.5, "full cover", -8, 10, colour=GREEN, ha="right")
-    _legend(ax, loc="lower right")
+        gp.dot(ax, 49.5, 49.5, "full cover", -8, 10, colour=GREEN, ha="right")
+    gp.legend(ax, loc="lower right")
 
 
 CAR_QUESTIONS = [
@@ -617,19 +603,19 @@ car = GuidedProblem(
 # ======================================================================
 
 def draw_capm(ax, stage):
-    _frame(ax, 2.4, 17, "beta", "expected return (%)")
+    gp.frame(ax, 2.4, 17, "beta", "expected return (%)")
     bs = np.array([0, 2.4])
     ax.plot(bs, 3 + bs * 5, color=LINE, lw=2, label="market line")
-    _dot(ax, 0, 3, r"$r_f$ = 3", 6, 4, colour=LINE)
-    _dot(ax, 1, 8, "market (1, 8)", 6, -14, colour=LINE)
+    gp.dot(ax, 0, 3, r"$r_f$ = 3", 6, 4, colour=LINE)
+    gp.dot(ax, 1, 8, "market (1, 8)", 6, -14, colour=LINE)
     if stage >= 1:
-        _dot(ax, 2, 13, "beta 2", 6, -14, colour=CURVE)
+        gp.dot(ax, 2, 13, "beta 2", 6, -14, colour=CURVE)
     if stage >= 2:
-        _dot(ax, 0.4, 5, "", colour=CURVE)
+        gp.dot(ax, 0.4, 5, "", colour=CURVE)
     if stage >= 3:
-        _dot(ax, 0.4, 6, "a good deal", 6, 4, colour=NEW)
-        _arrow(ax, (0.4, 6), (0.4, 5.15), NEW)
-    _legend(ax, loc="lower right")
+        gp.dot(ax, 0.4, 6, "a good deal", 6, 4, colour=NEW)
+        gp.arrow(ax, (0.4, 6), (0.4, 5.15), NEW)
+    gp.legend(ax, loc="lower right")
 
 
 GOOD_DEAL = "Above the line: buyers push its price up and its expected return down"

@@ -21,8 +21,12 @@ e.g.  python guided.py a4.0 -3
 """
 
 import hashlib
+import importlib
 import sys
+import warnings
 from fractions import Fraction
+
+from style import render
 
 SALT = "mst0441"
 BOX = None                    # marks an answer box inside a Question's form
@@ -70,6 +74,31 @@ def hash_choice(key, text):
     return digest(key, canon_choice(text))
 
 
+def answers(session):
+    """The two lookups a session file needs, for session "s03" and so on.
+
+        H, M = answers("s03")
+        H("d1.0")                      the hash of the right answer to box 0 of d1
+        M({"d1.0~4/9": "hint"})        {hash: "hint"}, for a Question's mistakes
+
+    The hashes come from answers_sNN.py, which a key file in the private repo
+    generates. Hash keys look like "d1.0" for the right answer to box 0 of
+    question d1, and "d1.0~4/9" for an expected mistake.
+    """
+    try:
+        hashes = importlib.import_module("answers_" + session).HASHES
+    except ImportError:                 # while the key file is being generated
+        hashes = {}
+
+    def H(key):
+        return hashes.get(key, "missing:" + key)
+
+    def M(messages):
+        return {H(k): v for k, v in messages.items()}
+
+    return H, M
+
+
 # ------------------------------------------------------------ questions ---
 
 class Question:
@@ -110,7 +139,7 @@ class Question:
 # ---------------------------------------------------------------- sources ---
 # Every step says where it comes from, in one of two colours, so a student
 # never goes hunting for "Part C" in the problem set. Lecture files build
-# their tags with tag("problem", ...) or tag("notes", ...).
+# their tags with PS(...) for the problem set or NOTES(...) for the notes.
 
 TAG_COLOURS = {
     "problem": ("#1d4ed8", "#dbeafe"),     # problem set: blue
@@ -120,6 +149,16 @@ TAG_COLOURS = {
 
 def tag(kind, text):
     return (kind, text)
+
+
+def PS(part):
+    # Problem numbers are the in-person problem set, e.g. PS("A3.1 (b)").
+    return tag("problem", "Problem " + part)
+
+
+def NOTES(where):
+    # Page numbers are the printed pages of the session notes, e.g. NOTES("p. 7").
+    return tag("notes", "Notes " + where)
 
 
 def badge(source):
@@ -163,9 +202,8 @@ class GuidedProblem:
         self.stage = 0
         self.attempts = 0
 
-        # The figure is an Image widget fed PNG bytes, not a pyplot figure in
-        # an Output widget: VS Code showed those twice, once in the widget and
-        # once as ordinary cell output. A PNG has only one place to go.
+        # The figure is an Image widget fed PNG bytes (see render in style.py),
+        # not a pyplot figure in an Output widget.
         self.fig_img = W.Image(format="png",
                                layout=W.Layout(width="560px", min_width="320px"))
         self.log = W.VBox()
@@ -198,27 +236,19 @@ class GuidedProblem:
         self._next_question()
 
     def _redraw(self):
-        # A bare Figure with its own Agg canvas never touches pyplot, so the
-        # notebook's inline backend cannot pick it up and show it again.
-        import io
-        from matplotlib.figure import Figure
-        from matplotlib.backends.backend_agg import FigureCanvasAgg
+        def draw(fig):
+            if self.whole_figure:
+                self.draw(fig, self.stage)
+            else:
+                self.draw(fig.add_subplot(), self.stage)
+            # An inset (a zoomed panel) makes tight_layout warn, and a warning
+            # would print under the widget. The layout is still fine, so keep
+            # it quiet.
+            with warnings.catch_warnings():
+                warnings.simplefilter("ignore", UserWarning)
+                fig.tight_layout()
 
-        fig = Figure(figsize=self.figsize)
-        FigureCanvasAgg(fig)
-        if self.whole_figure:
-            self.draw(fig, self.stage)
-        else:
-            self.draw(fig.add_subplot(), self.stage)
-        # An inset (a zoomed panel) makes tight_layout warn, and a warning would
-        # print under the widget. The layout is still fine, so keep it quiet.
-        import warnings
-        with warnings.catch_warnings():
-            warnings.simplefilter("ignore", UserWarning)
-            fig.tight_layout()
-        buf = io.BytesIO()
-        fig.savefig(buf, format="png", dpi=110)
-        self.fig_img.value = buf.getvalue()
+        self.fig_img.value = render(draw, self.figsize)
 
     def _next_question(self):
         W = self.W

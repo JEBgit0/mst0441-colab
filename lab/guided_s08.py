@@ -19,30 +19,15 @@ answer_keys/s08_keys.py in the private repo. The maths is firms.py.
 import numpy as np
 
 import firms as fm
-from guided import BOX, GuidedProblem, Question, tag
-from guided_s03 import (CURVE, GREEN, GREY, HALF, INK, LINE, MUTE, NEW, _dot, _frame,
-                        _legend)
-from guided_s04 import _arrow
+import guided_plots as gp
+from guided import BOX, NOTES, PS, GuidedProblem, Question, answers
+from style import CURVE, GREEN, GREY, HALF, INK, LINE, NEW
 
-try:
-    from answers_s08 import HASHES
-except ImportError:
-    HASHES = {}
+H, M = answers("s08")
 
-PS = lambda part: tag("problem", "Problem " + part)
-NOTES = lambda where: tag("notes", "Notes " + where)
 CTX = ("<span style='background:#fef3c7;color:#b45309;border-radius:4px;padding:1px 6px'>"
        "context: bachelor prerequisite, not examined</span> ")
-RED = "#dc2626"
 ABAR = "A&#772;"
-
-
-def H(key):
-    return HASHES.get(key, "missing:" + key)
-
-
-def M(messages):
-    return {H(k): v for k, v in messages.items()}
 
 
 def _G_curve(ax, As, shares, w, rmax, **kw):
@@ -68,41 +53,41 @@ def _task_bars(ax, names, values, cut, colours):
 
 def draw_producer(fig, stage):
     bk, mo, iso = fig.subplots(1, 3)
-    _frame(bk, 10.5, 1300, "bakers E", "kr per hour")
+    gp.frame(bk, 10.5, 1300, "bakers E", "kr per hour")
     bk.set_title("Hiring: VMP = w", loc="left", color=INK, fontsize=9.5)
     E = np.linspace(0, 10, 50)
     bk.plot(E, 60 * (20 - 2 * E), color=LINE, lw=2, label="VMP")
     if stage >= 1:
         bk.axhline(600, color=GREY, lw=1, ls="--")
-        _dot(bk, 5, 600, "", colour=NEW)
+        gp.dot(bk, 5, 600, "", colour=NEW)
     if stage >= 2:
         bk.axhline(480, color=GREY, lw=1, ls=":")
-        _dot(bk, 6, 480, "", colour=NEW)
+        gp.dot(bk, 6, 480, "", colour=NEW)
 
-    _frame(mo, 12.5, 12.5, "q", "p")
+    gp.frame(mo, 12.5, 12.5, "q", "p")
     mo.set_title("Markup over MC", loc="left", color=INK, fontsize=9.5)
     q = np.linspace(0, 12, 50)
     mo.plot(q, 12 - q, color=INK, lw=1.8)
     mo.axhline(4, color=GREEN, lw=1.6)
     if stage >= 3:
         mo.plot(q[q <= 6], 12 - 2 * q[q <= 6], color=LINE, lw=1.6, ls="--")
-        _dot(mo, 4, 8, "", colour=NEW)
+        gp.dot(mo, 4, 8, "", colour=NEW)
         mo.plot([4, 4], [4, 8], color=NEW, lw=1, ls=":")
     if stage >= 4:
         mo.annotate("", xy=(5, 8), xytext=(5, 4),
                     arrowprops=dict(arrowstyle="<->", color=NEW, lw=1.2))
         mo.text(5.3, 5.7, "markup", color=NEW, fontsize=8.5)
 
-    _frame(iso, 10.5, 10.5, "E", "K")
+    gp.frame(iso, 10.5, 10.5, "E", "K")
     iso.set_title("Cheapest mix", loc="left", color=INK, fontsize=9.5)
     Es = np.linspace(1.5, 10.5, 200)
     iso.plot(Es, 16 / Es, color=CURVE, lw=2)
     if stage >= 5:
         iso.plot([0, 10], [10, 0], color=GREY, lw=1.2)
         iso.plot([0, 8], [8, 0], color=LINE, lw=1.6)
-        _dot(iso, 4, 4, "P", 6, 4, colour=LINE)
-        _dot(iso, 2, 8, "A", 6, 2, colour=GREY)
-        _dot(iso, 8, 2, "B", 6, 2, colour=GREY)
+        gp.dot(iso, 4, 4, "P", 6, 4, colour=LINE)
+        gp.dot(iso, 2, 8, "A", 6, 2, colour=GREY)
+        gp.dot(iso, 8, 2, "B", 6, 2, colour=GREY)
     fig.subplots_adjust(wspace=0.35)
 
 
@@ -161,18 +146,18 @@ producer = GuidedProblem(
 
 def draw_sigma(fig, stage):
     iso, sh = fig.subplots(1, 2)
-    _frame(iso, 10.5, 10.5, "E", "K")
+    gp.frame(iso, 10.5, 10.5, "E", "K")
     iso.set_title("q = 4", loc="left", color=INK, fontsize=9.5)
     Es = np.linspace(1.5, 10.5, 200)
     iso.plot(Es, 16 / Es, color=CURVE, lw=2)
-    _dot(iso, 4, 4, "P", 6, 4, colour=LINE)
+    gp.dot(iso, 4, 4, "P", 6, 4, colour=LINE)
     iso.plot([0, 10], [0, 10], color=LINE, lw=0.8, ls=":")
     if stage >= 1:
         iso.plot([0, 10.5], [0, 10.5 / 4], color=NEW, lw=0.8, ls=":")
-        _dot(iso, 8, 2, "B", 6, 4, colour=NEW)
-        _arrow(iso, (4.3, 3.7), (7.6, 2.2), NEW)
+        gp.dot(iso, 8, 2, "B", 6, 4, colour=NEW)
+        gp.arrow(iso, (4.3, 3.7), (7.6, 2.2), NEW)
 
-    _frame(sh, 1.05, 1, "r/w", "labor's share of costs")
+    gp.frame(sh, 1.05, 1, "r/w", "labor's share of costs")
     sh.set_title("Cheaper AI: right to left", loc="left", color=INK, fontsize=9.5)
     rw = np.linspace(0.1, 1, 100)
     if stage >= 3:
@@ -180,9 +165,9 @@ def draw_sigma(fig, stage):
     if stage >= 4:
         sh.plot(rw, [fm.labor_share(x, 2) for x in rw], color=NEW, lw=2, label="σ = 2")
         sh.plot(rw, [fm.labor_share(x, .5) for x in rw], color=LINE, lw=2, label="σ = 1/2")
-        _dot(sh, 0.25, 0.2, "", colour=NEW)
-        _dot(sh, 0.25, 2 / 3, "", colour=LINE)
-    _legend(sh, loc="lower right")
+        gp.dot(sh, 0.25, 0.2, "", colour=NEW)
+        gp.dot(sh, 0.25, 2 / 3, "", colour=LINE)
+    gp.legend(sh, loc="lower right")
     fig.subplots_adjust(wspace=0.32)
 
 
@@ -428,15 +413,15 @@ NORD_A, NORD_X = (10, 5, 1), (0.2, 0.4, 0.4)
 
 
 def draw_nordvik(ax, stage):
-    _frame(ax, 6000, 1.05, "AI rental rate r, kroner", "saving index G")
+    gp.frame(ax, 6000, 1.05, "AI rental rate r, kroner", "saving index G")
     if stage >= 1:
-        _dot(ax, 1000, 0.4, "(a)", 6, 4, colour=NEW)
+        gp.dot(ax, 1000, 0.4, "(a)", 6, 4, colour=NEW)
     if stage >= 3:
         ax.axvline(500, color=GREY, lw=1, ls=":")
         ax.text(520, 0.97, "negotiation\nenters", color=GREY, fontsize=8.5, va="top")
     if stage >= 4:
         _G_curve(ax, NORD_A, NORD_X, 500, 6000, color=LINE, lw=2)
-        _dot(ax, 100, 0.9, "(c)", 6, 4, colour=NEW)
+        gp.dot(ax, 100, 0.9, "(c)", 6, 4, colour=NEW)
         for r, name in ((2500, "drafting"), (5000, "transcription")):
             ax.axvline(r, color=GREY, lw=1, ls=":")
             ax.text(r + 40, 0.97, name + "\nenters", color=GREY, fontsize=8.5, va="top")
@@ -533,11 +518,11 @@ KYST_A, KYST_X = (2, 1, 0.5), (0.25, 0.5, 0.25)
 
 
 def draw_kyst(ax, stage):
-    _frame(ax, 7, 1.05, "AI rental rate r", "saving index G")
+    gp.frame(ax, 7, 1.05, "AI rental rate r", "saving index G")
     if stage >= 4:
-        _dot(ax, 2, 1 / 3, "r = 2", 6, 4, colour=NEW)
+        gp.dot(ax, 2, 1 / 3, "r = 2", 6, 4, colour=NEW)
     if stage >= 5:
-        _dot(ax, 1, 5 / 8, "r = 1", 6, 4, colour=NEW)
+        gp.dot(ax, 1, 5 / 8, "r = 1", 6, 4, colour=NEW)
     if stage >= 6:
         _G_curve(ax, KYST_A, KYST_X, 3, 7, color=LINE, lw=2)
         for r in (6, 3, 1.5):
@@ -628,13 +613,13 @@ kyst = GuidedProblem(
 # ======================================================================
 
 def draw_frontier(ax, stage):
-    _frame(ax, 28, 33, "X", "Y")
+    gp.frame(ax, 28, 33, "X", "Y")
     ax.plot([0, 20], [30, 0], color=LINE, lw=2, label="before")
     if stage >= 1:
         ax.plot([0, 25], [30, 0], color=NEW, lw=2, ls="--", label="X more productive")
     if stage >= 2:
         ax.text(14, 15, "flatter: X costs\nless Y", color=NEW, fontsize=9)
-    _legend(ax)
+    gp.legend(ax)
 
 
 PRICE_IF = "Labor moves freely and both goods are produced: then pX/pY = aY/aX"
@@ -731,7 +716,7 @@ frontier = GuidedProblem(
 def draw_marine(fig, stage):
     a, b = fig.subplots(1, 2)
     for ax, title in ((a, "Arrangement A"), (b, "Arrangement B")):
-        _frame(ax, 10, 10, "worker hours", "machine hours")
+        gp.frame(ax, 10, 10, "worker hours", "machine hours")
         ax.set_title(title, loc="left", color=INK, fontsize=9.5)
     if stage >= 2:
         for q, ls in ((5, "-"), (8, "--")):
@@ -741,7 +726,7 @@ def draw_marine(fig, stage):
         a.plot([0], [5], "o", color=NEW, ms=8, clip_on=False)
         a.text(0.3, 5.4, "machine only", color=NEW, fontsize=9)
     if stage >= 4:
-        _dot(b, 5, 5, "the kink", 6, 4, colour=NEW)
+        gp.dot(b, 5, 5, "the kink", 6, 4, colour=NEW)
     fig.subplots_adjust(wspace=0.3)
 
 
@@ -866,13 +851,13 @@ def draw_fjordline(fig, stage):
     if stage >= 7:
         costs = [1.5 / a for a in FJ_A]
         bars.bar(xs + 0.18, costs, width=0.34, color=NEW, alpha=0.8, label="r = 3/2")
-    _legend(bars, loc="upper left")
+    gp.legend(bars, loc="upper left")
 
-    _frame(g, 6.5, 1.05, "machine rent r", "saving index G")
+    gp.frame(g, 6.5, 1.05, "machine rent r", "saving index G")
     if stage >= 5:
-        _dot(g, 3, 5 / 16, "r = 3", 6, 4, colour=LINE)
+        gp.dot(g, 3, 5 / 16, "r = 3", 6, 4, colour=LINE)
     if stage >= 7:
-        _dot(g, 1.5, 19 / 32, "r = 3/2", 6, 4, colour=NEW)
+        gp.dot(g, 1.5, 19 / 32, "r = 3/2", 6, 4, colour=NEW)
     if stage >= 9:
         _G_curve(g, FJ_A, FJ_X, 2, 6.5, color=LINE, lw=2)
         for r in (6, 4, 2):
@@ -1028,7 +1013,7 @@ def draw_harbor(ax, stage):
     if stage >= 6:
         ax.bar(xs + 0.18, [f / 2 for f in HB_F], width=0.34, color="none", edgecolor=NEW,
                lw=1.5, ls="--", label="fee halved")
-    _legend(ax, loc="upper right")
+    gp.legend(ax, loc="upper right")
 
 
 SUM_CHART = "AI for the summary and the chart; human for compliance"
