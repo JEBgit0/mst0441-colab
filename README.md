@@ -7,6 +7,8 @@ Each session has two pages.
 - **Guided** asks one question at a time and draws the next piece of the figure only when the answer is right. A wrong answer gets a hint, never the answer. Use it before the solutions are posted.
 - **Sandbox** shows every number and has live sliders. Use it to check your own solutions and to try changes the problem set held fixed. A sandbox is published after the solutions for that session are posted.
 
+The three workshops are mock exams, and each has an **exam** page. Sit the paper first, with pen and paper. Then type your final answers in: the page marks a whole problem at once, out of the points the paper gives it, and keeps the score of your first marking.
+
 ## Open a session
 
 ### Part one: Consumers
@@ -25,7 +27,7 @@ Each session has two pages.
 | Session | Topic | Guided | Sandbox |
 | --- | --- | --- | --- |
 | 8 | Firms, tasks and technology (AI) | [open](https://colab.research.google.com/github/JEBgit0/mst0441-colab/blob/main/notebooks/s08_guided.ipynb) | [open](https://colab.research.google.com/github/JEBgit0/mst0441-colab/blob/main/notebooks/s08_sandbox.ipynb) |
-| 9 | Comparative advantage: Ricardo | after 5 Oct | after solutions |
+| 9 | Comparative advantage: Ricardo | [open](https://colab.research.google.com/github/JEBgit0/mst0441-colab/blob/main/notebooks/s09_guided.ipynb) | after solutions |
 | 10 | Heckscher-Ohlin and factor prices | after 9 Oct | after solutions |
 | 11 | Monopolistic competition, gravity and trade policy | after 16 Oct | after solutions |
 
@@ -40,6 +42,14 @@ Each session has two pages.
 
 The dates are when the notes for that session unlock (06:00). The guided page follows after that, and the sandbox after the solutions are posted.
 
+### Mock exams
+
+| Workshop | Covers | Exam | Sandbox |
+| --- | --- | --- | --- |
+| 1 | Sessions 2 to 7, 50 points | [open](https://colab.research.google.com/github/JEBgit0/mst0441-colab/blob/main/notebooks/w01_exam.ipynb) | after solutions |
+| 2 | to come | | |
+| 3 | to come | | |
+
 ## How to use a notebook
 
 1. Open a link above. You need a Google account.
@@ -48,11 +58,13 @@ The dates are when the notes for that session unlock (06:00). The guided page fo
 
 Have pen and paper ready for the guided pages: the exam wants the derivation, so write each step down before you type it in.
 
+An exam page checks final answers and conclusions only. The derivations, the figures and the sentences are what the real exam marks, so compare those with the solutions.
+
 ## What is in this repository
 
 | Folder | Contents |
 | --- | --- |
-| `notebooks/` | The pages students open: `sNN_guided.ipynb` and `sNN_sandbox.ipynb` for session NN. |
+| `notebooks/` | The pages students open: `sNN_guided.ipynb` and `sNN_sandbox.ipynb` for session NN, `wNN_exam.ipynb` and `wNN_sandbox.ipynb` for workshop NN. |
 | `lab/` | The Python code behind the pages. |
 
 Inside `lab/`:
@@ -61,15 +73,17 @@ Inside `lab/`:
 | --- | --- |
 | `guided.py` | The engine for the guided pages. It knows nothing about economics. |
 | `guided_sNN.py` | The questions, hints and figures for session NN. |
-| `answers_sNN.py` | Salted hashes of the answers for session NN. Generated, do not edit by hand. |
+| `answers_sNN.py`, `answers_wNN.py` | Salted hashes of the answers for session NN or workshop NN. Generated, do not edit by hand. |
+| `exam.py` | The engine for the mock exam pages: a whole problem on the page, marked together and scored. It uses the guided engine's questions and hashes. |
+| `exam_wNN.py` | The problems, hints and figures for workshop NN. |
 | `sandbox.py` | The base class for the sandbox labs. |
-| `sandbox_sNN.py` | The labs for session NN. |
+| `sandbox_sNN.py`, `sandbox_wNN.py` | The labs for session NN or workshop NN. |
 | `style.py` | The colours, and the drawing of a figure to an image. Shared by both kinds of page. |
 | `guided_plots.py` | Small drawing helpers for the guided figures: frame, dot, arrow, legend. |
 | `edgeworth_plots.py` | Drawing an Edgeworth box, for sessions 6 and 7. |
-| `consumer_theory.py`, `uncertainty.py`, `equilibrium.py`, `externality.py`, `firms.py` | The economics: the maths behind sessions 2 to 4, 5, 6, 7 and 8. |
+| `consumer_theory.py`, `uncertainty.py`, `equilibrium.py`, `externality.py`, `firms.py`, `ricardo.py` | The economics: the maths behind sessions 2 to 4, 5, 6, 7, 8 and 9. |
 
-The files depend on each other in one direction only: a notebook imports a session file, and a session file imports the engines, the shared drawing files and the economics. A sandbox may build on an earlier session's sandbox where the course does the same (session 4 reuses session 3's labs, session 7 reuses session 6's).
+The files depend on each other in one direction only: a notebook imports a session file, and a session file imports the engines, the shared drawing files and the economics. A sandbox may build on an earlier session's sandbox where the course does the same (session 4 reuses session 3's labs, session 7 reuses session 6's, and a workshop's sandbox reuses the labs of the sessions it examines).
 
 ## About the answers
 
