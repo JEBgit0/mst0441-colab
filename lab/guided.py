@@ -21,6 +21,7 @@ e.g.  python guided.py a4.0 -3
 """
 
 import hashlib
+import html
 import importlib
 import sys
 import warnings
@@ -134,6 +135,56 @@ class Question:
     @property
     def n_boxes(self):
         return sum(1 for item in self.form if item is BOX)
+
+
+class Choices:
+    """A multiple-choice list whose options wrap to the width of the page.
+
+    ipywidgets' RadioButtons gives every option one line of fixed height, so
+    on a narrow screen a long option wraps and is drawn on top of the next
+    one. Here each option is a small round button beside its text, and the
+    text is an HTML widget, which wraps like any paragraph and pushes the
+    next option down. It answers to value, options and disabled like the
+    RadioButtons it replaces; the widget to put on the page is box.
+    """
+
+    OFF, ON = "○", "●"
+
+    def __init__(self, W, options):
+        self.options = list(options)
+        self._value = None
+        self.buttons, rows = [], []
+        for option in self.options:
+            button = W.Button(description=self.OFF, tooltip="Choose this answer",
+                              layout=W.Layout(width="34px", flex="0 0 34px", padding="0"))
+            button.on_click(lambda _, option=option: setattr(self, "value", option))
+            text = W.HTML("<div style='line-height:1.35;padding:5px 0 3px'>%s</div>"
+                          % html.escape(option),
+                          layout=W.Layout(flex="1 1 0%", min_width="0", margin="0 0 0 6px"))
+            self.buttons.append(button)
+            rows.append(W.HBox([button, text], layout=W.Layout(align_items="flex-start")))
+        self.box = W.VBox(rows)
+
+    @property
+    def value(self):
+        return self._value
+
+    @value.setter
+    def value(self, option):
+        self._value = option if option in self.options else None
+        for button, own in zip(self.buttons, self.options):
+            picked = own == self._value
+            button.description = self.ON if picked else self.OFF
+            button.button_style = "primary" if picked else ""
+
+    @property
+    def disabled(self):
+        return self.buttons[0].disabled
+
+    @disabled.setter
+    def disabled(self, off):
+        for button in self.buttons:
+            button.disabled = off
 
 
 # ---------------------------------------------------------------- sources ---
@@ -266,9 +317,8 @@ class GuidedProblem:
                            q.prompt))
 
         if q.choices:
-            self.inputs = [W.RadioButtons(options=q.choices, value=None,
-                                          layout=W.Layout(width="auto"))]
-            line = self.inputs[0]
+            self.inputs = [Choices(W, q.choices)]
+            line = self.inputs[0].box
         else:
             self.inputs, parts = [], []
             for item in q.form:

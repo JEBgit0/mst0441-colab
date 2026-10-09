@@ -22,7 +22,7 @@ knows nothing about economics.
 
 import warnings
 
-from guided import BOX, Question, canon, hash_choice, hash_number
+from guided import BOX, Choices, Question, canon, hash_choice, hash_number
 from style import MUTE, render
 
 GOOD, BAD, WARN = "#15803d", "#b91c1c", "#b45309"
@@ -111,9 +111,8 @@ class ExamProblem:
                             "style='color:%s'>%s</span><br>%s</p>"
                             % (q.label, MUTE, points_text(q.points), q.prompt))
             if q.choices:
-                inputs = [W.RadioButtons(options=q.choices, value=None,
-                                         layout=W.Layout(width="auto"))]
-                line = inputs[0]
+                inputs = [Choices(W, q.choices)]
+                line = inputs[0].box
             else:
                 inputs, items = [], []
                 for item in q.form:
