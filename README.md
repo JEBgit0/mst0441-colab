@@ -27,7 +27,7 @@ The three workshops are mock exams, and each has an **exam** page. Sit the paper
 | Session | Topic | Guided | Sandbox |
 | --- | --- | --- | --- |
 | 8 | Firms, tasks and technology (AI) | [open](https://colab.research.google.com/github/JEBgit0/mst0441-colab/blob/main/notebooks/s08_guided.ipynb) | [open](https://colab.research.google.com/github/JEBgit0/mst0441-colab/blob/main/notebooks/s08_sandbox.ipynb) |
-| 9 | Comparative advantage: Ricardo | [open](https://colab.research.google.com/github/JEBgit0/mst0441-colab/blob/main/notebooks/s09_guided.ipynb) | after solutions |
+| 9 | Comparative advantage: Ricardo | [open](https://colab.research.google.com/github/JEBgit0/mst0441-colab/blob/main/notebooks/s09_guided.ipynb) | [open](https://colab.research.google.com/github/JEBgit0/mst0441-colab/blob/main/notebooks/s09_sandbox.ipynb) |
 | 10 | Heckscher-Ohlin and factor prices | after 9 Oct | after solutions |
 | 11 | Monopolistic competition, gravity and trade policy | after 16 Oct | after solutions |
 
@@ -46,7 +46,7 @@ The dates are when the notes for that session unlock (06:00). The guided page fo
 
 | Workshop | Covers | Exam | Sandbox |
 | --- | --- | --- | --- |
-| 1 | Sessions 2 to 7, 50 points | [open](https://colab.research.google.com/github/JEBgit0/mst0441-colab/blob/main/notebooks/w01_exam.ipynb) | after solutions |
+| 1 | Sessions 2 to 7, 50 points | [open](https://colab.research.google.com/github/JEBgit0/mst0441-colab/blob/main/notebooks/w01_exam.ipynb) | [open](https://colab.research.google.com/github/JEBgit0/mst0441-colab/blob/main/notebooks/w01_sandbox.ipynb) |
 | 2 | to come | | |
 | 3 | to come | | |
 
