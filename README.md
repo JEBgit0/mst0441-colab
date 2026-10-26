@@ -56,10 +56,6 @@ The dates are when the notes for that session unlock (06:00). The guided page fo
 2. Run the first code cell (Shift + Enter). It downloads the course code from this repository.
 3. Run the cell under each part to start it. The parts can be done in any order.
 
-Have pen and paper ready for the guided pages: the exam wants the derivation, so write each step down before you type it in.
-
-An exam page checks final answers and conclusions only. The derivations, the figures and the sentences are what the real exam marks, so compare those with the solutions.
-
 ## What is in this repository
 
 | Folder | Contents |
