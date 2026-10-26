@@ -216,9 +216,9 @@ KYST = dict(w=3.0, r=2.0, A1=2.0, A2=1.0, A3=0.5, x1=0.25, x2=0.5, x3=0.25, C0=1
 FJORD = dict(w=2.0, r=3.0, A1=3.0, A2=2.0, A3=1.0, x1=0.5, x2=0.25, x3=0.25, C0=160.0)
 
 
-def task_state(v):
-    A = [v["A1"], v["A2"], v["A3"]]
-    raw = [v["x1"], v["x2"], v["x3"]]
+def task_state(v, n=3):
+    A = [v["A%d" % i] for i in range(1, n + 1)]
+    raw = [v["x%d" % i] for i in range(1, n + 1)]
     tot = sum(raw) or 1.0
     shares = [x / tot for x in raw]
     w, r = v["w"], v["r"]
@@ -229,6 +229,7 @@ def task_state(v):
 
 
 class TaskLab(Lab):
+    TASKS = 3             # a subclass with more tasks adds A4, x4, ... to SLIDERS
     TITLE = "Lab 2 &middot; Which tasks does AI take, and how much does it save?"
     INTRO = ("Three tasks. A worker-hour makes one task-unit at wage w; an AI-service unit makes "
              "A<sub>i</sub> task-units at rental r. AI wins a task when r/A<sub>i</sub> &lt; w, that "
@@ -259,18 +260,21 @@ class TaskLab(Lab):
         dict(label="A8.2 tie at r = 2", kind="problem", values=dict(FJORD, r=2.0)),
     ]
 
+    def task_names(self):
+        return ["task %d" % i for i in range(1, self.TASKS + 1)]
+
     def relabel(self):
         self.w["w"].description = "Wage w"
         self.w["r"].description = "AI rental r"
-        for i in (1, 2, 3):
+        for i in range(1, self.TASKS + 1):
             html_label(self.w["A%d" % i], "A<sub>%d</sub>, task %d" % (i, i))
             html_label(self.w["x%d" % i], "&chi;<sub>%d</sub>, cost share" % i)
         self.w["C0"].description = "All-labor order cost"
 
     def compute(self):
         v = self.values()
-        st = dict(v=v, live=task_state(v))
-        st["before"] = task_state(self.before) if self.before else None
+        st = dict(v=v, live=task_state(v, self.TASKS))
+        st["before"] = task_state(self.before, self.TASKS) if self.before else None
         top = max(st["live"]["thr"] + [v["r"]] + ([self.before["r"]] if self.before else []))
         st["rmax"] = self.stick("r", top * 1.15)
         return st
@@ -279,7 +283,7 @@ class TaskLab(Lab):
         bx, gx = fig.subplots(1, 2, gridspec_kw=dict(width_ratios=[1, 1.2]))
         s = st["live"]
         style_axes(bx)
-        xs = np.arange(3)
+        xs = np.arange(self.TASKS)
         bx.bar(xs, s["A"], color=[LINE if a else GREY for a in s["auto"]], width=0.6)
         bx.axhline(s["r"] / s["w"], color=INK, lw=1.6, ls="--", label="cutoff r/w = %s"
                    % num(s["r"] / s["w"]))
@@ -287,7 +291,7 @@ class TaskLab(Lab):
             b = st["before"]
             bx.axhline(b["r"] / b["w"], color=BEFORE, lw=1.2, ls=":", label="before")
         bx.set_xticks(xs)
-        bx.set_xticklabels(["task 1", "task 2", "task 3"], fontsize=9)
+        bx.set_xticklabels(self.task_names(), fontsize=9)
         bx.set_title("AI productivity A (blue: AI)", loc="left", color=INK, fontsize=9.5)
         legend(bx)
 
@@ -312,12 +316,13 @@ class TaskLab(Lab):
         s = st["live"]
         w, r = s["w"], s["r"]
         lines = []
-        for i in range(3):
+        for i in range(self.TASKS):
             ai = r / s["A"][i]
             choice = ("AI" if s["auto"][i] else
                       "labor (a tie: either method)" if abs(ai - w) < 1e-9 else "labor")
-            lines.append("task %d: human %s, AI %s &rarr; %s, saving %s, share %s"
-                         % (i + 1, num(w), num(ai), choice, num(s["pis"][i]), num(s["shares"][i])))
+            lines.append("%s: human %s, AI %s &rarr; %s, saving %s, share %s"
+                         % (self.task_names()[i], num(w), num(ai), choice, num(s["pis"][i]),
+                            num(s["shares"][i])))
         rows = [
             ("Cutoff", "A&#772; = r/w = %s: AI takes every task with A above it." % num(r / w)),
             ("Tasks", "<br>".join(lines)),
@@ -330,7 +335,8 @@ class TaskLab(Lab):
         waiting = [(t, i) for i, t in enumerate(s["thr"]) if t <= r + 1e-9]
         if waiting:
             t, i = max(waiting)
-            rows.append(("Next", "Task %d switches to AI once r falls below %s." % (i + 1, num(t))))
+            rows.append(("Next", "%s switches to AI once r falls below %s."
+                         % (self.task_names()[i].capitalize(), num(t))))
         else:
             rows.append(("Next", "Every task already uses AI; cheaper AI only deepens the savings."))
         if st["before"] is not None:

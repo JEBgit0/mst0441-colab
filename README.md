@@ -28,15 +28,15 @@ The three workshops are mock exams, and each has an **exam** page. Sit the paper
 | --- | --- | --- | --- |
 | 8 | Firms, tasks and technology (AI) | [open](https://colab.research.google.com/github/JEBgit0/mst0441-colab/blob/main/notebooks/s08_guided.ipynb) | [open](https://colab.research.google.com/github/JEBgit0/mst0441-colab/blob/main/notebooks/s08_sandbox.ipynb) |
 | 9 | Comparative advantage: Ricardo | [open](https://colab.research.google.com/github/JEBgit0/mst0441-colab/blob/main/notebooks/s09_guided.ipynb) | [open](https://colab.research.google.com/github/JEBgit0/mst0441-colab/blob/main/notebooks/s09_sandbox.ipynb) |
-| 10 | Heckscher-Ohlin and factor prices | after 9 Oct | after solutions |
-| 11 | Monopolistic competition, gravity and trade policy | after 16 Oct | after solutions |
+| 10 | Heckscher-Ohlin and factor prices | [open](https://colab.research.google.com/github/JEBgit0/mst0441-colab/blob/main/notebooks/s10_guided.ipynb) | [open](https://colab.research.google.com/github/JEBgit0/mst0441-colab/blob/main/notebooks/s10_sandbox.ipynb) |
+| 11 | Monopolistic competition, gravity and trade policy | [open](https://colab.research.google.com/github/JEBgit0/mst0441-colab/blob/main/notebooks/s11_guided.ipynb) | [open](https://colab.research.google.com/github/JEBgit0/mst0441-colab/blob/main/notebooks/s11_sandbox.ipynb) |
 
 ### Part three: Strategy
 
 | Session | Topic | Guided | Sandbox |
 | --- | --- | --- | --- |
-| 12 | Static games and Nash equilibrium | after 26 Oct | after solutions |
-| 13 | Dynamic games and credibility | after 2 Nov | after solutions |
+| 12 | Static games and Nash equilibrium | [open](https://colab.research.google.com/github/JEBgit0/mst0441-colab/blob/main/notebooks/s12_guided.ipynb) | [open](https://colab.research.google.com/github/JEBgit0/mst0441-colab/blob/main/notebooks/s12_sandbox.ipynb) |
+| 13 | Dynamic games and credibility | [open](https://colab.research.google.com/github/JEBgit0/mst0441-colab/blob/main/notebooks/s13_guided.ipynb) | [open](https://colab.research.google.com/github/JEBgit0/mst0441-colab/blob/main/notebooks/s13_sandbox.ipynb) |
 | 14 | Incomplete information and signaling | after 9 Nov | after solutions |
 | 15 | Repeated games, collusion and competition policy | after 16 Nov | after solutions |
 
@@ -47,7 +47,7 @@ The dates are when the notes for that session unlock (06:00). The guided page fo
 | Workshop | Covers | Exam | Sandbox |
 | --- | --- | --- | --- |
 | 1 | Sessions 2 to 7, 50 points | [open](https://colab.research.google.com/github/JEBgit0/mst0441-colab/blob/main/notebooks/w01_exam.ipynb) | [open](https://colab.research.google.com/github/JEBgit0/mst0441-colab/blob/main/notebooks/w01_sandbox.ipynb) |
-| 2 | to come | | |
+| 2 | Sessions 8 to 11, 50 points | [open](https://colab.research.google.com/github/JEBgit0/mst0441-colab/blob/main/notebooks/w02_exam.ipynb) | [open](https://colab.research.google.com/github/JEBgit0/mst0441-colab/blob/main/notebooks/w02_sandbox.ipynb) |
 | 3 | to come | | |
 
 ## How to use a notebook
@@ -81,9 +81,10 @@ Inside `lab/`:
 | `style.py` | The colours, and the drawing of a figure to an image. Shared by both kinds of page. |
 | `guided_plots.py` | Small drawing helpers for the guided figures: frame, dot, arrow, legend. |
 | `edgeworth_plots.py` | Drawing an Edgeworth box, for sessions 6 and 7. |
-| `consumer_theory.py`, `uncertainty.py`, `equilibrium.py`, `externality.py`, `firms.py`, `ricardo.py` | The economics: the maths behind sessions 2 to 4, 5, 6, 7, 8 and 9. |
+| `game_plots.py` | Drawing a payoff matrix and a game tree, for sessions 12 and 13. |
+| `consumer_theory.py`, `uncertainty.py`, `equilibrium.py`, `externality.py`, `firms.py`, `ricardo.py`, `heckscher.py`, `monopolistic.py`, `games.py` | The economics: the maths behind sessions 2 to 4, 5, 6, 7, 8, 9, 10, 11, and 12 and 13. |
 
-The files depend on each other in one direction only: a notebook imports a session file, and a session file imports the engines, the shared drawing files and the economics. A sandbox may build on an earlier session's sandbox where the course does the same (session 4 reuses session 3's labs, session 7 reuses session 6's, and a workshop's sandbox reuses the labs of the sessions it examines).
+The files depend on each other in one direction only: a notebook imports a session file, and a session file imports the engines, the shared drawing files and the economics. A sandbox may build on an earlier session's sandbox where the course does the same (session 4 reuses session 3's labs, session 7 reuses session 6's, session 13 reuses session 12's duopoly lab, and a workshop's sandbox reuses the labs of the sessions it examines).
 
 ## About the answers
 
